@@ -7,10 +7,6 @@ La aplicación implementa roles de usuario para diferenciar permisos y responsab
 
 El proyecto sigue una arquitectura cliente-servidor, utilizando:
 
-Astro y Bootstrap para el frontend,
-
-Spring Boot (Java) para el backend,
-
-Supabase (PostgreSQL) como base de datos.
+React y Supabase (PostgreSQL) como base de datos.
 
 Está enfocado en ofrecer una solución realista, escalable y alineada con la normativa de trazabilidad, aplicando buenas prácticas de desarrollo web, diseño de bases de datos y control de versiones.
