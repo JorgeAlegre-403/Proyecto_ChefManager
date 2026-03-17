@@ -2,101 +2,99 @@
   <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/chef-hat.svg" alt="TraceFood Logo" width="80" height="80">
   <h1 align="center">TraceFood</h1>
   <p align="center">
-    <strong>Gestión inteligente de trazabilidad alimentaria para cocinas profesionales</strong>
+    <strong>Sistema Integral de Trazabilidad y Gestión de Almacenes para Cocinas Profesionales</strong>
   </p>
   <p align="center">
-    <a href="#características">Características</a> •
-    <a href="#stack-tecnológico">Stack Tecnológico</a> •
-    <a href="#instalación-y-desarrollo">Instalación</a> •
-    <a href="#documentación-y-manuales">Documentación</a>
+    <a href="#-presentación-del-proyecto">Presentación</a> •
+    <a href="#-características">Características</a> •
+    <a href="#-stack-tecnológico">Stack Tecnológico</a> •
+    <a href="#-documentación-y-manuales">Documentación</a> •
+    <a href="#-instalación-y-despliegue">Instalación</a>
   </p>
 </div>
 
 ---
 
-## 📖 Sobre el Proyecto
+## 👨‍🍳 Presentación del Proyecto
 
-**TraceFood** es una aplicación web de vanguardia diseñada para modernizar y facilitar el trabajo dentro de las cocinas profesionales. Atrás quedó el registro manual en hojas de papel; TraceFood permite a los equipos gastronómicos digitalizar sus almacenes, registrar recepciones de productos, controlar estrictamente las caducidades y automatizar la creación de menús en función de las existencias.
+**TraceFood** nació de la necesidad real de modernizar la gestión interna de los restaurantes. Las cocinas profesionales manejan diariamente enormes volúmenes de materias primas, y el control manual en papel o Excel conlleva pérdidas económicas por caducidades no detectadas (mermas) e incongruencias ante posibles inspecciones de Sanidad.
 
-El proyecto se centra en dos pilares fundamentales:
-1. **La Seguridad Alimentaria**: Garantizando trazabilidad total desde la recepción del producto hasta que se sirve en la mesa.
-2. **Eficiencia y Reducción de Mermas**: Implementando lógicas de planificación inteligente de menús que prioricen los ingredientes más próximos a vencer, minimizando el desperdicio económico y promoviendo la sostenibilidad del negocio.
+El proyecto **TraceFood** ofrece a los equipos gastronómicos una herramienta unificada para:
+- **Digitalizar la Recepción de Mercancías**: Registrando ingredientes, lotes, proveedores y caducidades al instante.
+- **Mejorar la Rentabilidad**: Reduciendo el desperdicio mediante alertas de caducidad temprana.
+- **Automatizar la Planificación**: Creando menús basados en los productos que corren el riesgo de echarse a perder (metodología *First Expired, First Out*).
+- **Proteger al Consumidor**: Gracias a una trazabilidad inversa inmediata y precisa.
 
 ---
 
 ## ✨ Características Principales
 
-- 📦 **Registro Dinámico de Productos**: Ingreso rápido de mercancías (proveedor, lote, fecha de caducidad, zona de almacenaje y fotografía del producto/albarán).
-- 🧭 **Mapa de Almacén**: Organización visual de los ingredientes en función de sus condiciones óptimas de conservación.
-- 📆 **Planificador de Menús Automático**: Asistente que propone usos de inventario bajo normativa FEFO (First Expired, First Out).
+- 📦 **Registro Dinámico de Productos**: Ingreso rápido de mercancías (proveedor, lote, zona de almacén).
+- 🧭 **Mapa de Almacén**: Organización visual (cámaras frigoríficas, cuarto frío, secos) según las condiciones de cada alimento.
+- 📆 **Planificador de Menús Automático**: Asistente que propone usos de inventario bajo normativa de seguridad alimentaria.
 - 🔔 **Sistema de Alertas Visuales**: Notificaciones inmediatas sobre productos cercanos a su límite de consumo.
-- 📱 **Diseño "Mobile First" Premium**: Interfaz moderna basada en "glassmorphism", responsiva para su uso intensivo en tablets dentro de las zonas de cocina.
+- 📱 **Diseño "Mobile First" Premium**: Interfaz moderna, altamente responsiva para su uso intensivo en tablets dentro de las zonas de cocina.
 
 ---
 
 ## 🛠 Stack Tecnológico
 
-La aplicación ha sido desarrollada utilizando las mejores y más actuales herramientas del ecosistema Frontend de JavaScript.
+El proyecto ha adoptado la arquitectura "Modern Frontend" combinada con servicios Backend-as-a-Service, garantizando rendimiento y escalabilidad.
 
-| Tecnología | Descripción |
-| --- | --- |
-| **[React v19](https://react.dev/)** | Librería principal para la creación de interfaces de usuario interactivas. |
-| **[TypeScript](https://www.typescriptlang.org/)** | Superset de JavaScript que añade tipado estático, vital para la escalabilidad. |
-| **[Vite.js](https://vitejs.dev/)** | Empaquetador extremadamente rápido para un entorno de desarrollo óptimo. |
-| **[Tailwind CSS v4](https://tailwindcss.com/)** | Framework de utilidades CSS para dotar a la app de un diseño premium y responsive rápido. |
-| **[Framer Motion](https://www.framer.com/motion/)** | Librería líder para animaciones fluidas al hacer scroll y en transiciones de layout. |
-
----
-
-## 🚀 Instalación y Desarrollo
-
-Sigue estos pasos para levantar el entorno de desarrollo en tu máquina local:
-
-### Prerrequisitos
-- [Node.js](https://nodejs.org/) (versión LTS recomendada, 18.x o superior)
-- Git
-
-### Paso a paso
-
-1. **Clonar el repositorio:**
-   ```bash
-   git clone https://github.com/JorgeAlegre-403/Proyecto_Trazabilidad.git
-   ```
-
-2. **Navegar a la carpeta del proyecto:**
-   ```bash
-   cd Proyecto_Trazabilidad
-   ```
-
-3. **Instalar dependencias:**
-   ```bash
-   npm install
-   ```
-
-4. **Arrancar el servidor de desarrollo:**
-   ```bash
-   npm run dev
-   ```
-   > 💡 *El entorno se iniciará habitualmente en [http://localhost:5173/](http://localhost:5173/)*
-
-### Compilar para Producción
-
-Para generar una versión optimizada y minificada para servidores web:
-```bash
-npm run build
-```
-Esto creará una carpeta `/dist` en la raíz, que contiene todos los recursos listos para subir a cualquier plataforma (Vercel, Netlify, Nginx, Apache, etc.).
+| Tecnología | Rol en el Proyecto |
+| :--- | :--- |
+| **[React (v19)](https://react.dev/) + [Vite](https://vitejs.dev/)** | Motor central del Frontend. Renderizado ultrarrápido y desarrollo ágil. |
+| **[Tailwind CSS (v4)](https://tailwindcss.com/)** | Estilización atómica para un diseño *premium*, fluido y totalmente responsivo. |
+| **[Zustand](https://zustand-demo.pmnd.rs/)** | Manejo del Estado Global (State Management). Mantiene la sincronización de inventarios, carrito interno y menús sin prop-drilling. |
+| **[Supabase](https://supabase.com/)** | Base de Datos (PostgreSQL), Autenticación y Backend Serverless fluido y real-time. |
+| **[React Router](https://reactrouter.com/)** | Gestión segura del enrutamiento de páginas (Dashboard, Inventario, Login). |
+| **[Framer Motion](https://www.framer.com/motion/)** | Librería líder para micro-animaciones en transiciones de layout y scroll. |
 
 ---
 
 ## 📚 Documentación y Manuales
 
-El proyecto cuenta con documentación adjunta extremadamente detallada en formato Markdown y PDF, alojada dentro del directorio `/manuales/` en la raíz de este proyecto:
+La documentación académica y operativa del proyecto **ha sido estructurada de forma externa** para su correcta lectura. Toda la información profunda, requisitos y análisis de diseño se encuentra alojada en el directorio [`/Proyecto_Trazabilidad/manuales/`](./Proyecto_Trazabilidad/manuales/).
 
-- **📄 Manual de Usuario**: Funcionamiento general, pantallas, dashboard y uso práctico.
-- **⚙️ Manual Técnico**: Arquitectura requerida, requisitos (Funcionales y No Funcionales) y modelos de BBDD propuestos.
-- **🚀 Manual de Despliegue**: Instrucciones precisas de infraestructura y compilación final.
-- **📂 Manual del Proyecto**: Resumen del desarrollo durante los trimestres del curso, metas alcanzadas y enfoque global.
+> **Nota para evaluación**: En la carpeta indicada encontrarás 4 documentos completos (`.pdf` y `.md`):
+
+1. 📄 **Manual_de_Usuario**: Funcionamiento general, pantallas, dashboard, logueo y uso práctico por parte del Jefe de Cocina/Cocinero.
+2. ⚙️ **Manual_Tecnico**: Arquitectura requerida, requisitos (Funcionales y No Funcionales), stack y estructura de BBDD relacional (roles).
+3. 🚀 **Manual_de_Despliegue**: Instrucciones precisas de infraestructura, clones y compilación final.
+4. 📂 **Manual_del_Proyecto**: Resumen del desarrollo durante los trimestres del curso, metas alcanzadas, problemas técnicos solventados y justificación del modelo.
+
+---
+
+## 🚀 Instalación y Despliegue
+
+Sigue estos pasos para levantar el entorno de desarrollo local:
+
+### 1. Clonar el repositorio
+```bash
+git clone https://github.com/JorgeAlegre-403/Proyecto_Trazabilidad.git
+```
+
+### 2. Navegar a la carpeta React
+```bash
+cd Proyecto_Trazabilidad/Proyecto_Trazabilidad
+```
+
+### 3. Instalar dependencias
+```bash
+npm install
+```
+
+### 4. Configurar Variables de Entorno (.env)
+Deberás crear un archivo `.env` en la raíz insertando las claves API proporcionadas por Supabase:
+```env
+VITE_SUPABASE_URL=tu_url_de_supabase
+VITE_SUPABASE_ANON_KEY=tu_clave_anonima
+```
+
+### 5. Arrancar el servidor de desarrollo
+```bash
+npm run dev
+```
 
 ---
 
