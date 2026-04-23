@@ -7,29 +7,29 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row justify-between items-center md:items-start gap-8">
 
           <div className="flex flex-col items-center md:items-start max-w-xs text-center md:text-left">
-            <div className="flex items-center gap-2 text-2xl font-bold text-blue-400 mb-4">
+            <div className="flex items-center gap-2 text-2xl font-bold text-orange-400 mb-4">
               <LuChefHat className="text-3xl" /> TraceFood
             </div>
             <p className="text-gray-400 text-sm leading-relaxed">
-              La plataforma definitiva para la gestión de trazabilidad en cocinas profesionales. Organiza, planifica y asegura la calidad.
+              La plataforma integral para la gestión y trazabilidad de alimentos en tu restaurante. Control total, eficiencia garantizada.
             </p>
           </div>
 
           <div className="flex flex-col items-center md:items-start">
             <h4 className="font-semibold text-lg mb-4 text-gray-200">Producto</h4>
             <ul className="space-y-2 text-gray-400 text-sm">
-              <li><a href="#features" className="hover:text-blue-400 transition-colors">Funcionalidades</a></li>
-              <li><a href="#" className="hover:text-blue-400 transition-colors">Precios</a></li>
-              <li><a href="#" className="hover:text-blue-400 transition-colors">Casos de Éxito</a></li>
+              <li><a href="#features" className="hover:text-orange-400 transition-colors">Funcionalidades</a></li>
+              <li><a href="#roles" className="hover:text-orange-400 transition-colors">Roles</a></li>
+              <li><a href="#" className="hover:text-orange-400 transition-colors">Documentación</a></li>
             </ul>
           </div>
 
           <div className="flex flex-col items-center md:items-start">
             <h4 className="font-semibold text-lg mb-4 text-gray-200">Compañía</h4>
             <ul className="space-y-2 text-gray-400 text-sm">
-              <li><a href="#" className="hover:text-blue-400 transition-colors">Sobre Nosotros</a></li>
-              <li><a href="#" className="hover:text-blue-400 transition-colors">Contacto</a></li>
-              <li><a href="#" className="hover:text-blue-400 transition-colors">Política de Privacidad</a></li>
+              <li><a href="#" className="hover:text-orange-400 transition-colors">Sobre Nosotros</a></li>
+              <li><a href="#" className="hover:text-orange-400 transition-colors">Contacto</a></li>
+              <li><a href="#" className="hover:text-orange-400 transition-colors">Política de Privacidad</a></li>
             </ul>
           </div>
 
