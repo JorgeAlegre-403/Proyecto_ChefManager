@@ -114,14 +114,17 @@ export default function ListadoPage() {
 
   const getCategoriaLabel = (cat: string) => {
     const labels: Record<string, string> = {
-      lacteo: 'Lacteo',
-      carne: 'Carne',
-      frutas: 'Frutas',
+      carnes: 'Carnes',
+      pescados: 'Pescados',
       verduras: 'Verduras',
-      pescado: 'Pescado',
-      bebidas: 'Bebidas',
+      frutas: 'Frutas',
+      lacteos: 'Lácteos',
       cereales: 'Cereales',
-      condimentos: 'Condimentos',
+      legumbres: 'Legumbres',
+      aceites: 'Aceites',
+      especias: 'Especias',
+      bebidas: 'Bebidas',
+      congelados: 'Congelados',
       otros: 'Otros',
     }
     return labels[cat] || cat
@@ -213,14 +216,17 @@ export default function ListadoPage() {
                             </td>
                             <td style={{ padding: '0.5rem' }}>
                               <select name="categoria" value={editFormData.categoria} onChange={handleEditChange} style={{ width: '100%', padding: '0.4rem', fontSize: '12px' }}>
-                                <option value="lacteo">Lacteo</option>
-                                <option value="carne">Carne</option>
-                                <option value="frutas">Frutas</option>
+                                <option value="carnes">Carnes</option>
+                                <option value="pescados">Pescados</option>
                                 <option value="verduras">Verduras</option>
-                                <option value="pescado">Pescado</option>
-                                <option value="bebidas">Bebidas</option>
+                                <option value="frutas">Frutas</option>
+                                <option value="lacteos">Lácteos</option>
                                 <option value="cereales">Cereales</option>
-                                <option value="condimentos">Condimentos</option>
+                                <option value="legumbres">Legumbres</option>
+                                <option value="aceites">Aceites</option>
+                                <option value="especias">Especias</option>
+                                <option value="bebidas">Bebidas</option>
+                                <option value="congelados">Congelados</option>
                                 <option value="otros">Otros</option>
                               </select>
                             </td>
