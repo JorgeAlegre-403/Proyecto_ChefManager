@@ -27,7 +27,7 @@ export default function Login() {
       if (error) {
         setError(error.message)
       } else if (data.user) {
-        navigate('/formulario')
+        navigate('/listado')
       }
     } catch (err) {
       setError('Error al iniciar sesion')
@@ -38,7 +38,6 @@ export default function Login() {
 
   return (
     <div className="relative min-h-screen bg-gray-50 flex items-center justify-center overflow-hidden font-sans selection:bg-orange-200 selection:text-orange-900">
-      {/* Back button */}
       <Link
         to="/"
         className="absolute top-6 left-6 z-20 flex items-center gap-2 px-4 py-2.5 rounded-xl text-gray-600 hover:text-orange-600 bg-white/60 backdrop-blur-md border border-gray-200/50 hover:border-orange-200 font-medium text-sm transition-all hover:shadow-md"
@@ -47,7 +46,6 @@ export default function Login() {
         Volver
       </Link>
 
-      {/* Login card */}
       <motion.div
         className="relative z-10 w-full max-w-[420px] mx-4"
         initial={{ opacity: 0, y: 30 }}
@@ -55,7 +53,6 @@ export default function Login() {
         transition={{ duration: 0.6, ease: 'easeOut' }}
       >
         <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-8 border border-gray-100 shadow-xl shadow-orange-900/5">
-          {/* Header */}
           <div className="text-center mb-8">
             <div className="inline-flex items-center justify-center bg-orange-600 text-white p-3 rounded-xl mb-5 shadow-lg shadow-orange-600/20">
               <LuChefHat className="w-7 h-7" />
@@ -72,7 +69,6 @@ export default function Login() {
           </div>
 
           <form onSubmit={handleLogin} className="space-y-5">
-            {/* Email field */}
             <div>
               <label htmlFor="login-email" className="block mb-1.5 font-medium text-sm text-gray-700">
                 Correo electronico
@@ -91,7 +87,6 @@ export default function Login() {
               </div>
             </div>
 
-            {/* Password field */}
             <div>
               <label htmlFor="login-password" className="block mb-1.5 font-medium text-sm text-gray-700">
                 Contrasena
@@ -118,7 +113,6 @@ export default function Login() {
               </div>
             </div>
 
-            {/* Error message */}
             {error && (
               <motion.div
                 initial={{ opacity: 0, y: -8 }}
@@ -129,7 +123,6 @@ export default function Login() {
               </motion.div>
             )}
 
-            {/* Submit button */}
             <button
               type="submit"
               disabled={loading}
@@ -144,7 +137,6 @@ export default function Login() {
           </form>
         </div>
 
-        {/* Footer text */}
         <p className="text-center text-xs text-gray-400 mt-6">
           Sistema de trazabilidad alimentaria
         </p>
