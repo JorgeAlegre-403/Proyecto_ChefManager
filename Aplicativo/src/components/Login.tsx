@@ -111,6 +111,14 @@ export default function Login() {
                   {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
                 </button>
               </div>
+              <div className="flex justify-end mt-1.5">
+                <Link
+                  to="/recuperar-contrasena"
+                  className="text-xs font-medium text-orange-600 hover:text-orange-700 transition-colors"
+                >
+                  ¿Olvidaste tu contraseña?
+                </Link>
+              </div>
             </div>
 
             {error && (

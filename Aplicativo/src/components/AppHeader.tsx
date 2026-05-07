@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabaseClient'
 import { LuChefHat } from 'react-icons/lu'
+import { header } from 'framer-motion/client'
 
 export default function AppHeader() {
   const navigate = useNavigate()
@@ -70,6 +71,44 @@ export default function AppHeader() {
           </button>
 
           <button
+            onClick={() => navigate('/generar-platos')}
+            style={{
+              backgroundColor: 'transparent',
+              color: '#8b5cf6',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '500',
+              padding: '0.5rem 1rem',
+              borderRadius: '4px',
+              transition: 'background-color 0.2s'
+            }}
+            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f5f3ff'}
+            onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+          >
+            Generar Platos
+          </button>
+
+          <button
+            onClick={() => navigate('/platos')}
+            style={{
+              backgroundColor: 'transparent',
+              color: '#8b5cf6',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '500',
+              padding: '0.5rem 1rem',
+              borderRadius: '4px',
+              transition: 'background-color 0.2s'
+            }}
+            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f5f3ff'}
+            onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+          >
+            Platos Guardados
+          </button>
+
+          <button
             onClick={handleLogout}
             style={{
               backgroundColor: '#ef4444',
@@ -89,6 +128,6 @@ export default function AppHeader() {
           </button>
         </nav>
       </div>
-    </header>
+    </header >
   )
 }

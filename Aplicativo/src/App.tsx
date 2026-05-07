@@ -9,6 +9,9 @@ import Footer from './components/Footer'
 import Login from './components/Login'
 import FormularioPage from './pages/FormularioPage'
 import ListadoPage from './pages/ListadoPage'
+import { GenerarPlatosPage } from './pages/GenerarPlatosPage'
+import PlatosPage from './pages/PlatosPage'
+import ForgotPasswordPage from './pages/ForgotPasswordPage'
 import './styles/index.css'
 
 function HomePage() {
@@ -74,6 +77,23 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/generar-platos"
+          element={
+            <ProtectedRoute>
+              <GenerarPlatosPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/platos"
+          element={
+            <ProtectedRoute>
+              <PlatosPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/recuperar-contrasena" element={<ForgotPasswordPage />} />
       </Routes>
     </BrowserRouter>
   )
