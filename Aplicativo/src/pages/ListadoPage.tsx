@@ -10,6 +10,7 @@ interface Ingrediente {
   fecha_entrada: string
   fecha_caducidad: string
   cantidad: number
+  unidad_medida: string
   numero_lote: string
   zona_almacen: string
   activo: boolean
@@ -96,6 +97,7 @@ export default function ListadoPage() {
         fecha_entrada: editFormData.fecha_entrada,
         fecha_caducidad: editFormData.fecha_caducidad,
         cantidad: editFormData.cantidad,
+        unidad_medida: editFormData.unidad_medida,
         numero_lote: editFormData.numero_lote,
         zona_almacen: editFormData.zona_almacen
       })
@@ -255,6 +257,7 @@ export default function ListadoPage() {
                             <th style={{ padding: '1rem', textAlign: 'left', fontWeight: '600', fontSize: '13px', whiteSpace: 'nowrap' }}>F. Entrada</th>
                             <th style={{ padding: '1rem', textAlign: 'left', fontWeight: '600', fontSize: '13px', whiteSpace: 'nowrap' }}>F. Caducidad</th>
                             <th style={{ padding: '1rem', textAlign: 'right', fontWeight: '600', fontSize: '13px', whiteSpace: 'nowrap' }}>Cantidad</th>
+                            <th style={{ padding: '1rem', textAlign: 'left', fontWeight: '600', fontSize: '13px', whiteSpace: 'nowrap' }}>Unidad</th>
                             <th style={{ padding: '1rem', textAlign: 'left', fontWeight: '600', fontSize: '13px', whiteSpace: 'nowrap' }}>N. Lote</th>
                             <th style={{ padding: '1rem', textAlign: 'left', fontWeight: '600', fontSize: '13px', whiteSpace: 'nowrap' }}>Zona</th>
                             <th style={{ padding: '1rem', textAlign: 'center', fontWeight: '600', fontSize: '13px', whiteSpace: 'nowrap' }}>Acciones</th>
@@ -294,6 +297,15 @@ export default function ListadoPage() {
                                     <input type="number" name="cantidad" value={editFormData.cantidad} onChange={handleEditChange} style={{ width: '100%', padding: '0.4rem', fontSize: '12px', textAlign: 'right' }} />
                                   </td>
                                   <td style={{ padding: '0.5rem' }}>
+                                    <select name="unidad_medida" value={editFormData.unidad_medida} onChange={handleEditChange} style={{ width: '100%', padding: '0.4rem', fontSize: '12px' }}>
+                                      <option value="KG">KG</option>
+                                      <option value="g">g</option>
+                                      <option value="L">L</option>
+                                      <option value="ml">ml</option>
+                                      <option value="unidades">unidades</option>
+                                    </select>
+                                  </td>
+                                  <td style={{ padding: '0.5rem' }}>
                                     <input type="text" name="numero_lote" value={editFormData.numero_lote} onChange={handleEditChange} style={{ width: '100%', padding: '0.4rem', fontSize: '12px' }} />
                                   </td>
                                   <td style={{ padding: '0.5rem' }}>
@@ -319,6 +331,7 @@ export default function ListadoPage() {
                                   <td style={{ padding: '1rem', fontSize: '14px' }}>{formatDate(item.fecha_entrada)}</td>
                                   <td style={{ padding: '1rem', fontSize: '14px' }}>{formatDate(item.fecha_caducidad)}</td>
                                   <td style={{ padding: '1rem', fontSize: '14px', textAlign: 'right' }}>{item.cantidad}</td>
+                                  <td style={{ padding: '1rem', fontSize: '14px' }}>{item.unidad_medida || '-'}</td>
                                   <td style={{ padding: '1rem', fontSize: '14px' }}>
                                     <code style={{ backgroundColor: '#f3f4f6', padding: '0.2rem 0.5rem', borderRadius: '4px', fontSize: '12px' }}>{item.numero_lote}</code>
                                   </td>

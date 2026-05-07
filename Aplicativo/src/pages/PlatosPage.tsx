@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import * as platoService from '../services/platoService';
 import type { Plato } from '../types/plato';
 import AppHeader from '../components/AppHeader';
-import { LuPlus, LuPencil, LuTrash2, LuEye, LuX, LuInfo } from 'react-icons/lu';
+import { LuPlus, LuPencil, LuTrash2, LuEye, LuX, LuInfo, LuTriangleAlert } from 'react-icons/lu';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function PlatosPage() {
@@ -11,6 +11,7 @@ export default function PlatosPage() {
   const [loading, setLoading] = useState(true);
   const [mensaje, setMensaje] = useState({ texto: '', tipo: '' });
   const [platoVerIngredientes, setPlatoVerIngredientes] = useState<Plato | null>(null);
+  const [idPlatoAEliminar, setIdPlatoAEliminar] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -26,12 +27,10 @@ export default function PlatosPage() {
     setLoading(false);
   };
 
-  const handleEliminarPlato = async (platoId: string) => {
-    if (!window.confirm('¿Estás seguro de que deseas eliminar este plato?')) {
-      return;
-    }
+  const handleEliminarPlato = async () => {
+    if (!idPlatoAEliminar) return;
 
-    const resultado = await platoService.eliminarPlato(platoId);
+    const resultado = await platoService.eliminarPlato(idPlatoAEliminar);
     if (resultado.success) {
       setMensaje({ texto: 'Plato eliminado exitosamente', tipo: 'success' });
       cargarPlatos();
@@ -39,6 +38,7 @@ export default function PlatosPage() {
     } else {
       setMensaje({ texto: resultado.error, tipo: 'error' });
     }
+    setIdPlatoAEliminar(null);
   };
 
   const handleEditarPlato = (platoId: string) => {
@@ -64,9 +64,8 @@ export default function PlatosPage() {
         </div>
 
         {mensaje.texto && (
-          <div className={`mb-6 p-4 rounded-xl border ${
-            mensaje.tipo === 'success' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'
-          }`}>
+          <div className={`mb-6 p-4 rounded-xl border ${mensaje.tipo === 'success' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'
+            }`}>
             {mensaje.texto}
           </div>
         )}
@@ -126,7 +125,7 @@ export default function PlatosPage() {
                             <LuPencil className="w-5 h-5" />
                           </button>
                           <button
-                            onClick={() => handleEliminarPlato(plato.id)}
+                            onClick={() => setIdPlatoAEliminar(plato.id)}
                             className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                             title="Eliminar"
                           >
@@ -196,6 +195,46 @@ export default function PlatosPage() {
                     className="w-full py-3 bg-gray-900 hover:bg-black text-white font-bold rounded-xl transition-all active:scale-[0.98]"
                   >
                     Cerrar ventana
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Modal de Confirmación de Eliminación */}
+      <AnimatePresence>
+        {idPlatoAEliminar && (
+          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden border border-red-100"
+            >
+              <div className="p-8 text-center">
+                <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 text-red-500">
+                  <LuTriangleAlert className="w-10 h-10" />
+                </div>
+
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">¿Estás seguro?</h3>
+                <p className="text-gray-500 mb-8 px-2">
+                  Esta acción eliminará el plato de forma permanente. No podrás recuperar esta receta después.
+                </p>
+
+                <div className="flex flex-col gap-3">
+                  <button
+                    onClick={handleEliminarPlato}
+                    className="w-full py-4 bg-red-600 hover:bg-red-700 text-white font-bold rounded-2xl transition-all shadow-lg shadow-red-600/20 active:scale-[0.98]"
+                  >
+                    Sí, eliminar plato
+                  </button>
+                  <button
+                    onClick={() => setIdPlatoAEliminar(null)}
+                    className="w-full py-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-2xl transition-all active:scale-[0.98]"
+                  >
+                    No, mantener plato
                   </button>
                 </div>
               </div>

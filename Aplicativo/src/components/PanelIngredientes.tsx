@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import type { IngredienteDisponible } from '../types/plato';
+import { obtenerUnidadBase } from '../services/platoService';
 
 interface PanelIngredientesProps {
   ingredientes: IngredienteDisponible[];
@@ -59,7 +60,7 @@ export function PanelIngredientes({
                   {ingrediente.nombre}
                 </p>
                 <p className="text-sm text-gray-600">
-                  Disponible: {ingrediente.cantidad.toFixed(2)} kg
+                  Disponible: {ingrediente.cantidad.toFixed(2)} {obtenerUnidadBase(ingrediente.categoria, ingrediente.unidad_medida)}
                 </p>
               </div>
               <button

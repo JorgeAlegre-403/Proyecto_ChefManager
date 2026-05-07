@@ -13,7 +13,7 @@ export async function obtenerIngredientesDisponibles(): Promise<
   try {
     const { data, error } = await supabase
       .from('ingredientes')
-      .select('id, nombre, cantidad, categoria')
+      .select('id, nombre, cantidad, categoria, unidad_medida')
       .eq('activo', true)
       .order('nombre', { ascending: true });
 
@@ -24,6 +24,7 @@ export async function obtenerIngredientesDisponibles(): Promise<
       nombre: item.nombre,
       cantidad: item.cantidad,
       categoria: item.categoria,
+      unidad_medida: item.unidad_medida,
     }));
 
     return { success: true, data: ingredientes };
@@ -36,9 +37,44 @@ export async function obtenerIngredientesDisponibles(): Promise<
   }
 }
 
+export function normalizarCantidad(cantidad: number, unidad: string): number {
+  const u = unidad.toLowerCase();
+  switch (u) {
+    case 'g': return cantidad / 1000;
+    case 'kg': return cantidad;
+    case 'ml': return cantidad / 1000;
+    case 'l': return cantidad;
+    case 'taza': return cantidad * 0.250;
+    case 'cda': return cantidad * 0.015;
+    case 'cdt': return cantidad * 0.005;
+    case 'unidad':
+    default:
+      return cantidad;
+  }
+}
+
+// Obtener la unidad base (prioriza la unidad guardada, si no, usa la categoría)
+export function obtenerUnidadBase(categoria?: string, unidadGuardada?: string): string {
+  if (unidadGuardada) return unidadGuardada;
+  if (!categoria) return 'unidades';
+  const c = categoria.toLowerCase();
+
+  if (['carnes', 'pescados', 'verduras', 'frutas', 'cereales', 'legumbres', 'congelados'].includes(c)) {
+    return 'KG';
+  }
+  if (['aceites', 'bebidas', 'lacteos'].includes(c)) {
+    return 'L';
+  }
+  if (['especias'].includes(c)) {
+    return 'g';
+  }
+  return 'unidades';
+}
+
 export async function validarCantidadDisponible(
   ingredienteId: string,
-  cantidadRequerida: number
+  cantidadRequerida: number,
+  unidad: string
 ): Promise<ApiResponse<boolean>> {
   try {
     const { data, error } = await supabase
@@ -54,7 +90,8 @@ export async function validarCantidadDisponible(
       return { success: false, error: 'Ingrediente no encontrado' };
     }
 
-    const hayStock = data.cantidad >= cantidadRequerida;
+    const cantidadNormalizada = normalizarCantidad(cantidadRequerida, unidad);
+    const hayStock = data.cantidad >= cantidadNormalizada;
     return { success: true, data: hayStock };
   } catch (error) {
     console.error('Error al validar cantidad:', error);
@@ -109,22 +146,24 @@ export async function crearPlato(
     for (const ing of platoInput.ingredientes) {
       const validacion = await validarCantidadDisponible(
         ing.ingrediente_id,
-        ing.cantidad
+        ing.cantidad,
+        ing.unidad_medida
       );
 
       if (!validacion.success || !validacion.data) {
         const { data: ingrediente } = await supabase
           .from('ingredientes')
-          .select('nombre, cantidad')
+          .select('nombre, cantidad, categoria, unidad_medida')
           .eq('id', ing.ingrediente_id)
           .single();
 
         const cantidadDisponible = ingrediente?.cantidad || 0;
         const nombreIng = ingrediente?.nombre || 'Ingrediente desconocido';
+        const unidadBase = obtenerUnidadBase(ingrediente?.categoria, ingrediente?.unidad_medida);
 
         return {
           success: false,
-          error: `Cantidad insuficiente de ${nombreIng}. Disponible: ${cantidadDisponible}, Requerido: ${ing.cantidad}`,
+          error: `Cantidad insuficiente de ${nombreIng}. Disponible: ${cantidadDisponible} ${unidadBase}, Requerido: ${ing.cantidad} ${ing.unidad_medida}`,
         };
       }
     }
@@ -227,7 +266,7 @@ export async function obtenerPlatos(): Promise<ApiResponse<Plato[]>> {
     for (const plato of platos || []) {
       const { data: ingredientes, error: errorIngredientes } = await supabase
         .from('platos_ingredientes')
-        .select('ingrediente_id, cantidad, unidad_medida, ingredientes(nombre)')
+        .select('ingrediente_id, cantidad, unidad_medida, ingredientes(nombre, cantidad, categoria, unidad_medida)')
         .eq('plato_id', plato.id);
 
       if (errorIngredientes) throw errorIngredientes;
@@ -238,6 +277,9 @@ export async function obtenerPlatos(): Promise<ApiResponse<Plato[]>> {
           nombre: item.ingredientes?.nombre || '',
           cantidad: item.cantidad,
           unidad_medida: item.unidad_medida,
+          cantidad_disponible: item.ingredientes?.cantidad || 0,
+          categoria: item.ingredientes?.categoria || 'otros',
+          unidad_medida_stock: item.ingredientes?.unidad_medida || '',
         })
       );
 
@@ -274,7 +316,7 @@ export async function obtenerPlatoById(id: string): Promise<ApiResponse<Plato>> 
 
     const { data: ingredientes, error: errorIngredientes } = await supabase
       .from('platos_ingredientes')
-      .select('ingrediente_id, cantidad, unidad_medida, ingredientes(nombre)')
+      .select('ingrediente_id, cantidad, unidad_medida, ingredientes(nombre, cantidad, categoria, unidad_medida)')
       .eq('plato_id', id);
 
     if (errorIngredientes) throw errorIngredientes;
@@ -285,6 +327,9 @@ export async function obtenerPlatoById(id: string): Promise<ApiResponse<Plato>> 
         nombre: item.ingredientes?.nombre || '',
         cantidad: item.cantidad,
         unidad_medida: item.unidad_medida,
+        cantidad_disponible: item.ingredientes?.cantidad || 0,
+        categoria: item.ingredientes?.categoria || 'otros',
+        unidad_medida_stock: item.ingredientes?.unidad_medida || '',
       })
     );
 
@@ -344,6 +389,32 @@ export async function actualizarPlato(
       .eq('id', id);
 
     if (errorPlato) throw errorPlato;
+
+    // 1.5 Validar stock de los nuevos ingredientes
+    for (const ing of platoInput.ingredientes) {
+      const validacion = await validarCantidadDisponible(
+        ing.ingrediente_id,
+        ing.cantidad,
+        ing.unidad_medida
+      );
+
+      if (!validacion.success || !validacion.data) {
+        const { data: ingrediente } = await supabase
+          .from('ingredientes')
+          .select('nombre, cantidad, categoria, unidad_medida')
+          .eq('id', ing.ingrediente_id)
+          .single();
+
+        const cantidadDisponible = ingrediente?.cantidad || 0;
+        const nombreIng = ingrediente?.nombre || 'Ingrediente desconocido';
+        const unidadBase = obtenerUnidadBase(ingrediente?.categoria, ingrediente?.unidad_medida);
+
+        return {
+          success: false,
+          error: `Cantidad insuficiente de ${nombreIng}. Disponible: ${cantidadDisponible} ${unidadBase}, Requerido: ${ing.cantidad} ${ing.unidad_medida}`,
+        };
+      }
+    }
 
     // 2. Eliminar ingredientes anteriores
     const { error: errorDelete } = await supabase

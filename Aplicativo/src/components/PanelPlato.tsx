@@ -1,4 +1,5 @@
 import type { IngredientePlato } from '../types/plato';
+import { normalizarCantidad, obtenerUnidadBase } from '../services/platoService';
 
 interface PanelPlatoProps {
   nombrePlato: string;
@@ -93,8 +94,22 @@ export function PanelPlato({
                         const val = e.target.value === '' ? 0 : parseFloat(e.target.value);
                         onCantidadChange(ingrediente.id, val);
                       }}
-                      className="w-full px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className={`w-full px-2 py-1 border rounded text-sm focus:outline-none focus:ring-2 ${
+                        ingrediente.cantidad_disponible !== undefined && 
+                        normalizarCantidad(ingrediente.cantidad, ingrediente.unidad_medida) > ingrediente.cantidad_disponible
+                          ? 'border-red-500 focus:ring-red-200'
+                          : 'border-gray-300 focus:ring-blue-500'
+                      }`}
                     />
+                    {ingrediente.cantidad_disponible !== undefined && (
+                      <p className={`text-[10px] mt-1 font-medium ${
+                        normalizarCantidad(ingrediente.cantidad, ingrediente.unidad_medida) > ingrediente.cantidad_disponible 
+                          ? 'text-red-600' 
+                          : 'text-gray-500'
+                      }`}>
+                        Stock: {ingrediente.cantidad_disponible} {obtenerUnidadBase(ingrediente.categoria, ingrediente.unidad_medida_stock)}
+                      </p>
+                    )}
                   </div>
 
                   <div className="flex-1">
