@@ -3,6 +3,7 @@ export interface IngredienteDisponible {
     nombre: string;
     cantidad: number;
     categoria: string;
+    unidad_medida?: string;
 }
 
 export interface IngredientePlato {
@@ -10,6 +11,9 @@ export interface IngredientePlato {
     nombre: string;
     cantidad: number;
     unidad_medida: string;
+    cantidad_disponible?: number;
+    categoria?: string;
+    unidad_medida_stock?: string;
 }
 
 export interface Plato {
