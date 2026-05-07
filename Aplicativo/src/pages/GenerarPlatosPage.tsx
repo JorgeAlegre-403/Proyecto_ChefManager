@@ -32,7 +32,7 @@ export function GenerarPlatosPage() {
       cargarPlatoParaEditar(editId);
     }
   }, [editId]);
-  
+
   const cargarIngredientes = async () => {
     setLoadingIngredientes(true);
     const resultado = await platoService.obtenerIngredientesDisponibles();
@@ -69,6 +69,7 @@ export function GenerarPlatosPage() {
       nombre: ingrediente.nombre,
       cantidad: 1,
       unidad_medida: 'kg',
+      cantidad_disponible: ingrediente.cantidad,
     };
 
     setIngredientesSeleccionados([
@@ -122,6 +123,18 @@ export function GenerarPlatosPage() {
       return;
     }
 
+    // Nueva validación de stock antes de enviar al servidor
+    for (const ing of ingredientesSeleccionados) {
+      if (ing.cantidad_disponible !== undefined) {
+        const cantidadNormalizada = platoService.normalizarCantidad(ing.cantidad, ing.unidad_medida);
+        if (cantidadNormalizada > ing.cantidad_disponible) {
+          const unidadBase = platoService.obtenerUnidadBase(ing.categoria, ing.unidad_medida_stock);
+          setMensajeError(`No hay suficiente stock de ${ing.nombre}. Disponible: ${ing.cantidad_disponible} ${unidadBase}`);
+          return;
+        }
+      }
+    }
+
     setGuardando(true);
 
     const platoInput = {
@@ -144,7 +157,7 @@ export function GenerarPlatosPage() {
     setGuardando(false);
 
     if (resultado.success) {
-      setMensajeExito(`✓ Plato "${resultado.data.nombre}" ${editId ? 'actualizado' : 'creado'} exitosamente`);
+      setMensajeExito(`Plato "${resultado.data.nombre}" ${editId ? 'actualizado' : 'creado'} exitosamente`);
 
       if (!editId) {
         setNombrePlato('');
