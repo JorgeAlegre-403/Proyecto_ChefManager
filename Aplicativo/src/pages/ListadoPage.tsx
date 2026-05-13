@@ -213,7 +213,7 @@ export default function ListadoPage() {
               <div className="search-container">
                 <input
                   type="text"
-                  placeholder="🔍 Buscar por nombre de alimento..."
+                  placeholder="Buscar por nombre de alimento..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="search-input"
