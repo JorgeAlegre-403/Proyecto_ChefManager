@@ -11,6 +11,7 @@ import FormularioPage from './pages/FormularioPage'
 import ListadoPage from './pages/ListadoPage'
 import { GenerarPlatosPage } from './pages/GenerarPlatosPage'
 import PlatosPage from './pages/PlatosPage'
+import GenerarMenusPage from './pages/GenerarMenusPage'
 import ForgotPasswordPage from './pages/ForgotPasswordPage'
 import './styles/index.css'
 
@@ -90,6 +91,14 @@ function App() {
           element={
             <ProtectedRoute>
               <PlatosPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/generar-menus"
+          element={
+            <ProtectedRoute>
+              <GenerarMenusPage />
             </ProtectedRoute>
           }
         />

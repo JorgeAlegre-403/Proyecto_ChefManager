@@ -167,7 +167,6 @@ export function GenerarPlatosPage() {
 
       setTimeout(() => {
         setMensajeExito('');
-        navigate('/platos');
       }, 2000);
     } else {
       setMensajeError(resultado.error);

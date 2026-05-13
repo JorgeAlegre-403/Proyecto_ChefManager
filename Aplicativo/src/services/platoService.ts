@@ -47,7 +47,7 @@ export function normalizarCantidad(cantidad: number, unidad: string): number {
     case 'taza': return cantidad * 0.250;
     case 'cda': return cantidad * 0.015;
     case 'cdt': return cantidad * 0.005;
-    case 'unidad':
+    case 'unidad': return cantidad * 1;
     default:
       return cantidad;
   }
