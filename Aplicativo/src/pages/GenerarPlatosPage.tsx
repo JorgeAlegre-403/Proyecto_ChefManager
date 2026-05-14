@@ -68,8 +68,10 @@ export function GenerarPlatosPage() {
       id: ingrediente.id,
       nombre: ingrediente.nombre,
       cantidad: 1,
-      unidad_medida: 'kg',
+      unidad_medida: ingrediente.unidad_medida || 'kg',
       cantidad_disponible: ingrediente.cantidad,
+      unidad_medida_stock: ingrediente.unidad_medida,
+      categoria: ingrediente.categoria,
     };
 
     setIngredientesSeleccionados([

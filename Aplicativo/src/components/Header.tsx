@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { LuChefHat } from "react-icons/lu";
+import { LuChefHat, LuQrCode } from "react-icons/lu";
 
 const Header = () => {
     const [scrolled, setScrolled] = useState(false);
@@ -27,7 +27,7 @@ const Header = () => {
                         <div className="bg-orange-600 text-white p-1.5 rounded-lg group-hover:bg-orange-700 transition-colors">
                             <LuChefHat className="w-6 h-6" />
                         </div>
-                        <span className="tracking-tight">TraceFood</span>
+                        <span className="tracking-tight">TRAZAKITCHEN</span>
                     </div>
 
                     <nav className="hidden md:flex items-center gap-8">
@@ -36,9 +36,15 @@ const Header = () => {
                         <a href="#roles" className="text-gray-600 hover:text-orange-600 font-medium transition-colors text-sm">Roles</a>
                     </nav>
 
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3">
+                        <Link to="/menu-diario">
+                            <button className="hidden sm:flex items-center gap-2 bg-orange-50 text-orange-600 px-5 py-2.5 rounded-xl font-bold text-sm border border-orange-100 hover:bg-orange-100 transition-all active:scale-95">
+                                <LuQrCode className="w-4 h-4" />
+                                Menú del Día
+                            </button>
+                        </Link>
                         <Link to="/login">
-                            <button className="bg-orange-600 text-white px-5 py-2.5 rounded-xl font-medium text-sm hover:bg-orange-700 hover:shadow-lg hover:shadow-orange-600/20 transition-all active:scale-95">
+                            <button className="bg-orange-600 text-white px-5 py-2.5 rounded-xl font-bold text-sm hover:bg-orange-700 hover:shadow-lg hover:shadow-orange-600/20 transition-all active:scale-95">
                                 Acceder
                             </button>
                         </Link>

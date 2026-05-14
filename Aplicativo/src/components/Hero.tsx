@@ -24,13 +24,10 @@ const Hero = () => {
               Control total de tu restaurante
             </div>
             <h1 className="text-5xl lg:text-7xl font-extrabold text-gray-900 tracking-tight leading-[1.1] mb-6">
-              Trazabilidad <br className="hidden lg:block" />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600">
-                de alimentos
-              </span>
+              TRAZA<span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600">KITCHEN</span>
             </h1>
             <p className="text-lg lg:text-xl text-gray-600 mb-10 max-w-2xl mx-auto lg:mx-0 leading-relaxed text-balance">
-              Gestiona tu almacén, crea menús inteligentes y asegura la calidad de tus platos. Todo lo que necesitas para administrar un restaurante profesional en un solo lugar.
+              Diseña tus <strong>menús diarios</strong> con elegancia y profesionalidad, mientras mantienes una <strong>trazabilidad impecable</strong> de tus alimentos. La herramienta definitiva para chefs que valoran la calidad y el control total de su cocina.
             </p>
 
             <motion.div

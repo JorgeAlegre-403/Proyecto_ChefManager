@@ -1,9 +1,25 @@
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabaseClient'
 import { LuChefHat } from 'react-icons/lu'
+import { useState, useEffect } from 'react'
 
 export default function AppHeader() {
   const navigate = useNavigate()
+  const [role, setRole] = useState<string | null>(null)
+
+  useEffect(() => {
+    const getSession = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        if (user.email === 'cocinero@gmail.com') {
+          setRole('cocinero')
+        } else {
+          setRole(user.user_metadata?.role || 'admin')
+        }
+      }
+    }
+    getSession()
+  }, [])
 
   const handleLogout = async () => {
     await supabase.auth.signOut()
@@ -32,7 +48,7 @@ export default function AppHeader() {
             <div className="bg-orange-600 text-white p-1.5 rounded-lg group-hover:bg-orange-700 transition-colors">
               <LuChefHat className="w-6 h-6" />
             </div>
-            <span className="tracking-tight">TraceFood</span>
+            <span className="tracking-tight">TRAZAKITCHEN</span>
           </div>
         </div>
 
@@ -78,15 +94,29 @@ export default function AppHeader() {
             Platos Guardados
           </button>
 
-          <button
-            onClick={() => navigate('/generar-menus')}
-            className="nav-btn-header"
-            style={{ color: '#ea580c' }}
-            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#fff7ed'}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-          >
-            Generar Menús
-          </button>
+          {role === 'admin' && (
+            <>
+              <button
+                onClick={() => navigate('/generar-menus')}
+                className="nav-btn-header"
+                style={{ color: '#ea580c' }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#fff7ed'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+              >
+                Generar Menús
+              </button>
+
+              <button
+                onClick={() => navigate('/gestion-menus')}
+                className="nav-btn-header"
+                style={{ color: '#f97316' }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#fff7ed'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+              >
+                Gestión Menús
+              </button>
+            </>
+          )}
         </nav>
 
         {/* LADO DERECHO: BOTÓN CERRAR SESIÓN (Ocupa espacio flexible) */}

@@ -7,6 +7,7 @@ export interface Menu {
   visible: boolean;
   notas: string;
   platos: MenuPlatoRelacion[];
+  activo: boolean;
   created_at?: string;
   creado_por?: string;
 }
