@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import AppHeader from '../components/AppHeader'
 import '../styles/colors.css'
+import { LuPencil, LuTrash2, LuTriangleAlert, LuX, LuCircleCheck, LuBan, LuSearch } from 'react-icons/lu'
+import { motion, AnimatePresence } from 'framer-motion'
 
 interface Ingrediente {
   id: string
@@ -27,6 +29,8 @@ export default function ListadoPage() {
   const [editFormData, setEditFormData] = useState<Partial<Ingrediente>>({})
   const [searchTerm, setSearchTerm] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
+  const [idAEliminar, setIdAEliminar] = useState<string | null>(null)
+  const [mensaje, setMensaje] = useState({ texto: '', tipo: '' })
 
   const fetchIngredientes = async () => {
     setLoading(true)
@@ -51,20 +55,22 @@ export default function ListadoPage() {
     fetchIngredientes()
   }, [])
 
-  const handleEliminar = async (id: string) => {
-    if (!confirm('¿Estás seguro de que deseas eliminar este ingrediente?')) return
+  const handleConfirmarEliminar = async () => {
+    if (!idAEliminar) return
 
     const { error } = await supabase
       .from('ingredientes')
       .update({ activo: false })
-      .eq('id', id)
+      .eq('id', idAEliminar)
 
     if (error) {
-      setError(`Error al eliminar: ${error.message}`)
-      setTimeout(() => setError(''), 4000)
+      setMensaje({ texto: `Error al eliminar: ${error.message}`, tipo: 'error' })
     } else {
-      setIngredientes(prev => prev.filter(i => i.id !== id))
+      setIngredientes(prev => prev.filter(i => i.id !== idAEliminar))
+      setMensaje({ texto: 'Alimento eliminado correctamente', tipo: 'success' })
+      setTimeout(() => setMensaje({ texto: '', tipo: '' }), 3000)
     }
+    setIdAEliminar(null)
   }
 
   const startEditing = (ingrediente: Ingrediente) => {
@@ -104,11 +110,13 @@ export default function ListadoPage() {
       .eq('id', editingId)
 
     if (error) {
-      setError(`Error al actualizar: ${error.message}`)
+      setMensaje({ texto: `Error al actualizar: ${error.message}`, tipo: 'error' })
     } else {
       setIngredientes(prev => prev.map(i => i.id === editingId ? { ...i, ...editFormData } as Ingrediente : i))
+      setMensaje({ texto: 'Alimento actualizado correctamente', tipo: 'success' })
       setEditingId(null)
       setEditFormData({})
+      setTimeout(() => setMensaje({ texto: '', tipo: '' }), 3000)
     }
     setLoading(false)
   }
@@ -171,6 +179,20 @@ export default function ListadoPage() {
         <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
           <h2 style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '1.5rem' }}>Listado de Ingredientes</h2>
 
+          {mensaje.texto && (
+            <motion.div 
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={`mb-6 p-4 rounded-xl border ${
+                mensaje.tipo === 'success' 
+                  ? 'bg-green-50 border-green-200 text-green-700' 
+                  : 'bg-red-50 border-red-200 text-red-700'
+              }`}
+            >
+              {mensaje.texto}
+            </motion.div>
+          )}
+
           {error && (
             <div style={{
               padding: '0.75rem',
@@ -210,13 +232,15 @@ export default function ListadoPage() {
           ) : (
             <>
               {/* Buscador */}
-              <div className="search-container">
+              <div className="search-container relative">
+                <LuSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
                 <input
                   type="text"
                   placeholder="Buscar por nombre de alimento..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="search-input"
+                  style={{ paddingLeft: '3rem' }}
                 />
                 {searchTerm && (
                   <button
@@ -318,8 +342,22 @@ export default function ListadoPage() {
                                     </select>
                                   </td>
                                   <td style={{ padding: '1rem', textAlign: 'center', whiteSpace: 'nowrap' }}>
-                                    <button onClick={saveEdit} style={{ padding: '0.4rem 0.8rem', backgroundColor: '#10b981', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', marginRight: '0.5rem' }}>Guardar</button>
-                                    <button onClick={cancelEditing} style={{ padding: '0.4rem 0.8rem', backgroundColor: '#6b7280', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>Cancelar</button>
+                                    <div className="flex justify-center gap-2">
+                                      <button 
+                                        onClick={saveEdit} 
+                                        className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                                        title="Guardar"
+                                      >
+                                        <LuCircleCheck size={20} />
+                                      </button>
+                                      <button 
+                                        onClick={cancelEditing} 
+                                        className="p-2 text-slate-400 hover:bg-slate-100 rounded-lg transition-colors"
+                                        title="Cancelar"
+                                      >
+                                        <LuBan size={20} />
+                                      </button>
+                                    </div>
                                   </td>
                                 </>
                               ) : (
@@ -339,18 +377,22 @@ export default function ListadoPage() {
                                     <span className={`badge-zone zone-${item.zona_almacen}`}>{getZonaLabel(item.zona_almacen)}</span>
                                   </td>
                                   <td style={{ padding: '1rem', textAlign: 'center', whiteSpace: 'nowrap' }}>
-                                    <button
-                                      onClick={() => startEditing(item)}
-                                      style={{ padding: '0.4rem 0.8rem', backgroundColor: '#fbbf24', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', fontWeight: '500', marginRight: '0.5rem' }}
-                                    >
-                                      Editar
-                                    </button>
-                                    <button
-                                      onClick={() => handleEliminar(item.id)}
-                                      style={{ padding: '0.4rem 0.8rem', backgroundColor: '#fee2e2', color: '#991b1b', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', fontWeight: '500' }}
-                                    >
-                                      Eliminar
-                                    </button>
+                                    <div className="flex justify-center gap-2">
+                                      <button
+                                        onClick={() => startEditing(item)}
+                                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                        title="Editar"
+                                      >
+                                        <LuPencil size={20} />
+                                      </button>
+                                      <button
+                                        onClick={() => setIdAEliminar(item.id)}
+                                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                        title="Eliminar"
+                                      >
+                                        <LuTrash2 size={20} />
+                                      </button>
+                                    </div>
                                   </td>
                                 </>
                               )}
@@ -402,6 +444,46 @@ export default function ListadoPage() {
           )}
         </div>
       </div>
+
+      {/* Modal de Confirmación de Eliminación */}
+      <AnimatePresence>
+        {idAEliminar && (
+          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-md">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden border border-red-100"
+            >
+              <div className="p-8 text-center">
+                <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 text-red-500">
+                  <LuTriangleAlert className="w-10 h-10" />
+                </div>
+
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">¿Estás seguro?</h3>
+                <p className="text-gray-500 mb-8 px-2">
+                  Esta acción eliminará el alimento del listado. Los datos no podrán recuperarse después.
+                </p>
+
+                <div className="flex flex-col gap-3">
+                  <button
+                    onClick={handleConfirmarEliminar}
+                    className="w-full py-4 bg-red-600 hover:bg-red-700 text-white font-bold rounded-2xl transition-all shadow-lg shadow-red-600/20 active:scale-[0.98]"
+                  >
+                    Sí, eliminar alimento
+                  </button>
+                  <button
+                    onClick={() => setIdAEliminar(null)}
+                    className="w-full py-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-2xl transition-all active:scale-[0.98]"
+                  >
+                    No, mantener alimento
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

@@ -60,7 +60,7 @@ export default function Login() {
             <h1 className="text-2xl font-bold text-gray-900 tracking-tight mb-1">
               Bienvenido a{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-red-600">
-                TraceFood
+                TRAZAKITCHEN
               </span>
             </h1>
             <p className="text-gray-500 text-sm">
