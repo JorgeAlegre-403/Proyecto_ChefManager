@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { PanelPlatosSeleccionables } from '../components/PanelPlatosSeleccionables';
 import { PanelMenuBuilder } from '../components/PanelMenuBuilder';
 import * as menuService from '../services/menuService';
@@ -22,10 +22,28 @@ export default function GenerarMenusPage() {
   const [mensajeExito, setMensajeExito] = useState('');
   const [mensajeError, setMensajeError] = useState('');
   const [guardando, setGuardando] = useState(false);
+  const [searchParams] = useSearchParams();
+  const editId = searchParams.get('edit');
 
   useEffect(() => {
     cargarPlatos();
-  }, []);
+    if (editId) {
+      cargarDatosMenu(editId);
+    }
+  }, [editId]);
+
+  const cargarDatosMenu = async (id: string) => {
+    const resultado = await menuService.obtenerMenuPorId(id);
+    if (resultado.success && resultado.data) {
+      const menu = resultado.data;
+      setNombreMenu(menu.nombre);
+      setFechaMenu(menu.fecha);
+      setNotasMenu(menu.notas || '');
+      setPlatosSeleccionados(menu.platos);
+    } else {
+      setMensajeError('Error al cargar los datos del menú');
+    }
+  };
 
   const cargarPlatos = async () => {
     setLoadingPlatos(true);
@@ -95,14 +113,16 @@ export default function GenerarMenusPage() {
       })),
     };
 
-    const resultado = await menuService.crearMenu(menuInput);
+    const resultado = editId 
+      ? await menuService.actualizarMenu(editId, menuInput)
+      : await menuService.crearMenu(menuInput);
 
     if (resultado.success) {
-      setMensajeExito(`Menú "${nombreMenu}" guardado correctamente`);
+      setMensajeExito(`Menú "${nombreMenu}" ${editId ? 'actualizado' : 'guardado'} correctamente`);
 
       setTimeout(() => {
         setMensajeExito('');
-        // navigate('/menus');
+        navigate('/gestion-menus');
       }, 2000);
     } else {
       setMensajeError(resultado.error);
@@ -124,8 +144,12 @@ export default function GenerarMenusPage() {
               <LuArrowLeft className="w-5 h-5" />
             </button>
             <div>
-              <h1 className="text-3xl font-bold text-gray-800">Diseñar Menú</h1>
-              <p className="text-gray-500">Configura la oferta gastronómica para una fecha específica</p>
+              <h1 className="text-3xl font-bold text-gray-800">
+                {editId ? 'Editar Menú' : 'Diseñar Menú'}
+              </h1>
+              <p className="text-gray-500">
+                {editId ? 'Modifica los platos y detalles de este menú' : 'Configura la oferta gastronómica para una fecha específica'}
+              </p>
             </div>
           </div>
 
@@ -139,7 +163,7 @@ export default function GenerarMenusPage() {
             ) : (
               <>
                 <LuSave className="w-5 h-5" />
-                Guardar Menú
+                {editId ? 'Actualizar Menú' : 'Guardar Menú'}
               </>
             )}
           </button>
