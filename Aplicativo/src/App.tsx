@@ -12,6 +12,8 @@ import ListadoPage from './pages/ListadoPage'
 import { GenerarPlatosPage } from './pages/GenerarPlatosPage'
 import PlatosPage from './pages/PlatosPage'
 import GenerarMenusPage from './pages/GenerarMenusPage'
+import GestionMenusPage from './pages/GestionMenusPage'
+import PublicMenuPage from './pages/PublicMenuPage'
 import ForgotPasswordPage from './pages/ForgotPasswordPage'
 import './styles/index.css'
 
@@ -29,14 +31,23 @@ function HomePage() {
   )
 }
 
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
+function ProtectedRoute({ children, requiredRole }: { children: React.ReactNode, requiredRole?: 'admin' | 'cocinero' }) {
   const [user, setUser] = useState<any>(null)
+  const [role, setRole] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const checkUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       setUser(user)
+      if (user) {
+        // Asignación automática por email para facilitar la gestión al usuario
+        if (user.email === 'cocinero@gmail.com') {
+          setRole('cocinero')
+        } else {
+          setRole(user.user_metadata?.role || 'admin')
+        }
+      }
       setLoading(false)
     }
 
@@ -44,6 +55,11 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null)
+      if (session?.user?.email === 'cocinero@gmail.com') {
+        setRole('cocinero')
+      } else {
+        setRole(session?.user?.user_metadata?.role || 'admin')
+      }
     })
 
     return () => subscription?.unsubscribe()
@@ -53,7 +69,13 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Cargando...</div>
   }
 
-  return user ? <>{children}</> : <Navigate to="/" replace />
+  if (!user) return <Navigate to="/" replace />
+
+  if (requiredRole === 'admin' && role === 'cocinero') {
+    return <Navigate to="/listado" replace />
+  }
+
+  return <>{children}</>
 }
 
 function App() {
@@ -97,11 +119,20 @@ function App() {
         <Route
           path="/generar-menus"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute requiredRole="admin">
               <GenerarMenusPage />
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/gestion-menus"
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <GestionMenusPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/menu-diario" element={<PublicMenuPage />} />
         <Route path="/recuperar-contrasena" element={<ForgotPasswordPage />} />
       </Routes>
     </BrowserRouter>
