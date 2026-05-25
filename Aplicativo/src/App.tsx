@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { supabase } from './lib/supabaseClient'
+import { useRole } from './hooks/useRole'
 import Header from './components/Header'
 import Hero from './components/Hero'
 import Features from './components/Features'
@@ -32,68 +33,72 @@ function HomePage() {
   )
 }
 
-function ProtectedRoute({ children, requiredRole }: { children: React.ReactNode, requiredRole?: 'admin' | 'cocinero' | 'admin_usuarios' }) {
+/**
+ * ProtectedRoute lee el rol desde la tabla usuarios_app a través del hook useRole.
+ * Así el rol asignado por el administrador se aplica de verdad sin depender
+ * de user_metadata ni de emails hardcodeados.
+ *
+ * Permisos por rol:
+ *   - admin        → acceso total
+ *   - jefecocina   → acceso a alimentos, platos y menús (igual que admin, excepto /admin/usuarios)
+ *   - cocinero     → acceso a alimentos y platos (sin gestión de menús)
+ *   - admin_usuarios → solo /admin/usuarios
+ */
+function ProtectedRoute({
+  children,
+  requiredRole,
+}: {
+  children: React.ReactNode
+  requiredRole?: 'admin' | 'cocinero' | 'admin_usuarios'
+}) {
   const [user, setUser] = useState<any>(null)
-  const [role, setRole] = useState<string | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [userLoading, setUserLoading] = useState(true)
+  const { role, loading: roleLoading } = useRole()
 
   useEffect(() => {
     const checkUser = async () => {
       const { data: { user } } = await supabase.auth.getUser()
       setUser(user)
-      if (user) {
-        // Asignación automática por email para facilitar la gestión al usuario
-        if (user.email === 'cocinero@gmail.com') {
-          setRole('cocinero')
-        } else if (user.email === 'administrador@gmail.com') {
-          setRole('admin_usuarios')
-        } else {
-          setRole(user.user_metadata?.role || 'admin')
-        }
-      }
-      setLoading(false)
+      setUserLoading(false)
     }
-
     checkUser()
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
-      if (session?.user?.email === 'cocinero@gmail.com') {
-        setRole('cocinero')
-      } else if (session?.user?.email === 'administrador@gmail.com') {
-        setRole('admin_usuarios')
-      } else {
-        setRole(session?.user?.user_metadata?.role || 'admin')
-      }
     })
 
     return () => subscription?.unsubscribe()
   }, [])
 
-  if (loading) {
-    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>Cargando...</div>
+  if (userLoading || roleLoading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        Cargando...
+      </div>
+    )
   }
 
+  // Sin sesión → al inicio
   if (!user) return <Navigate to="/" replace />
 
-  // admin_usuarios solo puede acceder a /admin/usuarios
+  // --- Restricciones por rol ---
+
+  // admin_usuarios: solo puede acceder a /admin/usuarios
   if (role === 'admin_usuarios') {
-    if (requiredRole === 'admin_usuarios') {
-      return <>{children}</>
-    }
-    return <Navigate to="/admin/usuarios" replace />
+    return requiredRole === 'admin_usuarios' ? <>{children}</> : <Navigate to="/admin/usuarios" replace />
   }
 
-  // cocinero y jefecocina no pueden acceder a rutas admin
-  if ((role === 'cocinero' || role === 'jefecocina') && requiredRole === 'admin') {
-    return <Navigate to="/menu-diario" replace />
+  // cocinero: no puede acceder a rutas que requieren 'admin' (menús)
+  if (role === 'cocinero' && requiredRole === 'admin') {
+    return <Navigate to="/listado" replace />
   }
 
-  // jefecocina no puede acceder a rutas que requieren admin_usuarios
+  // jefecocina: puede acceder a todo excepto /admin/usuarios
   if (role === 'jefecocina' && requiredRole === 'admin_usuarios') {
-    return <Navigate to="/menu-diario" replace />
+    return <Navigate to="/listado" replace />
   }
 
+  // admin y jefecocina tienen acceso a rutas 'admin' (menús, etc.)
   return <>{children}</>
 }
 
