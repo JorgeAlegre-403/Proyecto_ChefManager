@@ -7,6 +7,46 @@ import type {
   IngredientePlato,
 } from '../types/plato';
 
+// Función para cargar imagen a Supabase Storage
+async function cargarImagenPlato(imagenBase64: string, platoId: string): Promise<string | null> {
+  try {
+    if (!imagenBase64) return null;
+
+    // Convertir base64 a blob
+    const base64Data = imagenBase64.split(',')[1] || imagenBase64;
+    const binaryString = atob(base64Data);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    const blob = new Blob([bytes], { type: 'image/jpeg' });
+
+    // Generar nombre único para la imagen
+    const timestamp = Date.now();
+    const nombreArchivo = `plato_${platoId}_${timestamp}.jpg`;
+
+    // Cargar a Supabase Storage
+    const { error } = await supabase.storage
+      .from('platos-imagenes')
+      .upload(nombreArchivo, blob, {
+        upsert: true,
+        contentType: 'image/jpeg',
+      });
+
+    if (error) throw error;
+
+    // Obtener URL pública
+    const { data: urlData } = supabase.storage
+      .from('platos-imagenes')
+      .getPublicUrl(nombreArchivo);
+
+    return urlData.publicUrl;
+  } catch (error) {
+    console.error('Error al cargar imagen:', error);
+    return null;
+  }
+}
+
 export async function obtenerIngredientesDisponibles(): Promise<
   ApiResponse<IngredienteDisponible[]>
 > {
@@ -175,6 +215,7 @@ export async function crearPlato(
         {
           nombre: platoInput.nombre.trim(),
           descripcion: platoInput.descripcion?.trim() || '',
+          imagen_url: null,
           activo: true,
         },
       ])
@@ -190,6 +231,22 @@ export async function crearPlato(
     });
 
     if (errorPlato) throw errorPlato;
+
+    // Cargar imagen si existe
+    if (platoInput.imagen_url) {
+      const imagenUrl = await cargarImagenPlato(platoInput.imagen_url, platoCreado.id);
+      if (imagenUrl) {
+        const { error: errorActualizar } = await supabase
+          .from('platos')
+          .update({ imagen_url: imagenUrl })
+          .eq('id', platoCreado.id);
+        
+        if (errorActualizar) {
+          console.error('Error al actualizar URL de imagen:', errorActualizar);
+        }
+        platoCreado.imagen_url = imagenUrl;
+      }
+    }
 
     const ingredientesParaInsertar = platoInput.ingredientes.map((ing) => ({
       plato_id: platoCreado.id,
@@ -228,6 +285,7 @@ export async function crearPlato(
       nombre: platoCreado.nombre,
       descripcion: platoCreado.descripcion,
       ingredientes: ingredientesFormato,
+      imagen_url: platoCreado.imagen_url,
       activo: platoCreado.activo,
       created_at: platoCreado.created_at,
       updated_at: platoCreado.updated_at,
@@ -288,6 +346,7 @@ export async function obtenerPlatos(): Promise<ApiResponse<Plato[]>> {
         nombre: plato.nombre,
         descripcion: plato.descripcion,
         ingredientes: ingredientesFormato,
+        imagen_url: plato.imagen_url,
         activo: plato.activo,
         created_at: plato.created_at,
         updated_at: plato.updated_at,
@@ -340,6 +399,7 @@ export async function obtenerPlatoById(id: string): Promise<ApiResponse<Plato>> 
         nombre: plato.nombre,
         descripcion: plato.descripcion,
         ingredientes: ingredientesFormato,
+        imagen_url: plato.imagen_url,
         activo: plato.activo,
         created_at: plato.created_at,
         updated_at: plato.updated_at,
@@ -378,14 +438,29 @@ export async function actualizarPlato(
   platoInput: CreatePlatoInput
 ): Promise<ApiResponse<Plato>> {
   try {
+    // Cargar imagen si existe
+    let imagenUrl: string | null = null;
+    if (platoInput.imagen_url && platoInput.imagen_url.startsWith('data:')) {
+      imagenUrl = await cargarImagenPlato(platoInput.imagen_url, id);
+    } else if (platoInput.imagen_url) {
+      // Si ya es una URL, mantenerla
+      imagenUrl = platoInput.imagen_url;
+    }
+
     // 1. Actualizar datos básicos del plato
+    const actualizacion: any = {
+      nombre: platoInput.nombre.trim(),
+      descripcion: platoInput.descripcion?.trim() || '',
+      updated_at: new Date().toISOString(),
+    };
+
+    if (imagenUrl) {
+      actualizacion.imagen_url = imagenUrl;
+    }
+
     const { error: errorPlato } = await supabase
       .from('platos')
-      .update({
-        nombre: platoInput.nombre.trim(),
-        descripcion: platoInput.descripcion?.trim() || '',
-        updated_at: new Date().toISOString(),
-      })
+      .update(actualizacion)
       .eq('id', id);
 
     if (errorPlato) throw errorPlato;

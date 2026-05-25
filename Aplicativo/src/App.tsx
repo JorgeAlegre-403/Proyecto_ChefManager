@@ -15,6 +15,7 @@ import GenerarMenusPage from './pages/GenerarMenusPage'
 import GestionMenusPage from './pages/GestionMenusPage'
 import PublicMenuPage from './pages/PublicMenuPage'
 import ForgotPasswordPage from './pages/ForgotPasswordPage'
+import AdminUsersPage from './pages/AdminUsersPage'
 import './styles/index.css'
 
 function HomePage() {
@@ -31,7 +32,7 @@ function HomePage() {
   )
 }
 
-function ProtectedRoute({ children, requiredRole }: { children: React.ReactNode, requiredRole?: 'admin' | 'cocinero' }) {
+function ProtectedRoute({ children, requiredRole }: { children: React.ReactNode, requiredRole?: 'admin' | 'cocinero' | 'admin_usuarios' }) {
   const [user, setUser] = useState<any>(null)
   const [role, setRole] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
@@ -44,6 +45,8 @@ function ProtectedRoute({ children, requiredRole }: { children: React.ReactNode,
         // Asignación automática por email para facilitar la gestión al usuario
         if (user.email === 'cocinero@gmail.com') {
           setRole('cocinero')
+        } else if (user.email === 'administrador@gmail.com') {
+          setRole('admin_usuarios')
         } else {
           setRole(user.user_metadata?.role || 'admin')
         }
@@ -53,10 +56,12 @@ function ProtectedRoute({ children, requiredRole }: { children: React.ReactNode,
 
     checkUser()
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
       if (session?.user?.email === 'cocinero@gmail.com') {
         setRole('cocinero')
+      } else if (session?.user?.email === 'administrador@gmail.com') {
+        setRole('admin_usuarios')
       } else {
         setRole(session?.user?.user_metadata?.role || 'admin')
       }
@@ -71,8 +76,22 @@ function ProtectedRoute({ children, requiredRole }: { children: React.ReactNode,
 
   if (!user) return <Navigate to="/" replace />
 
-  if (requiredRole === 'admin' && role === 'cocinero') {
-    return <Navigate to="/listado" replace />
+  // admin_usuarios solo puede acceder a /admin/usuarios
+  if (role === 'admin_usuarios') {
+    if (requiredRole === 'admin_usuarios') {
+      return <>{children}</>
+    }
+    return <Navigate to="/admin/usuarios" replace />
+  }
+
+  // cocinero y jefecocina no pueden acceder a rutas admin
+  if ((role === 'cocinero' || role === 'jefecocina') && requiredRole === 'admin') {
+    return <Navigate to="/menu-diario" replace />
+  }
+
+  // jefecocina no puede acceder a rutas que requieren admin_usuarios
+  if (role === 'jefecocina' && requiredRole === 'admin_usuarios') {
+    return <Navigate to="/menu-diario" replace />
   }
 
   return <>{children}</>
@@ -129,6 +148,14 @@ function App() {
           element={
             <ProtectedRoute requiredRole="admin">
               <GestionMenusPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/usuarios"
+          element={
+            <ProtectedRoute requiredRole="admin_usuarios">
+              <AdminUsersPage />
             </ProtectedRoute>
           }
         />

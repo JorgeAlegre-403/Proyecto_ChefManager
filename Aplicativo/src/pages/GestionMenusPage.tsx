@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { LuChevronLeft, LuCalendar, LuCircleCheck, LuExternalLink, LuTrash2, LuChefHat, LuTriangleAlert, LuX, LuPencil, LuBan } from 'react-icons/lu'
+import { LuChevronLeft, LuCalendar, LuCircleCheck, LuExternalLink, LuTrash2, LuChefHat, LuTriangleAlert, LuPencil, LuBan } from 'react-icons/lu'
 import { obtenerMenus, activarMenu, eliminarMenu, desactivarMenu } from '../services/menuService'
 import type { Menu } from '../types/menu'
 import AppHeader from '../components/AppHeader'

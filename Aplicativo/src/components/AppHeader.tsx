@@ -13,6 +13,8 @@ export default function AppHeader() {
       if (user) {
         if (user.email === 'cocinero@gmail.com') {
           setRole('cocinero')
+        } else if (user.email === 'administrador@gmail.com') {
+          setRole('admin_usuarios')
         } else {
           setRole(user.user_metadata?.role || 'admin')
         }
@@ -54,45 +56,49 @@ export default function AppHeader() {
 
         {/* CENTRO: NAVEGACIÓN PRINCIPAL */}
         <nav style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-          <button
-            onClick={() => navigate('/formulario')}
-            className="nav-btn-header"
-            style={{ color: '#3b82f6' }}
-            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#eff6ff'}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-          >
-            Agregar Alimento
-          </button>
+          {role !== 'admin_usuarios' && (
+            <>
+              <button
+                onClick={() => navigate('/formulario')}
+                className="nav-btn-header"
+                style={{ color: '#3b82f6' }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#eff6ff'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+              >
+                Agregar Alimento
+              </button>
 
-          <button
-            onClick={() => navigate('/listado')}
-            className="nav-btn-header"
-            style={{ color: '#10b981' }}
-            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#ecfdf5'}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-          >
-            Ver Listado
-          </button>
+              <button
+                onClick={() => navigate('/listado')}
+                className="nav-btn-header"
+                style={{ color: '#10b981' }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#ecfdf5'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+              >
+                Ver Listado
+              </button>
 
-          <button
-            onClick={() => navigate('/generar-platos')}
-            className="nav-btn-header"
-            style={{ color: '#8b5cf6' }}
-            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f5f3ff'}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-          >
-            Generar Platos
-          </button>
+              <button
+                onClick={() => navigate('/generar-platos')}
+                className="nav-btn-header"
+                style={{ color: '#8b5cf6' }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f5f3ff'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+              >
+                Generar Platos
+              </button>
 
-          <button
-            onClick={() => navigate('/platos')}
-            className="nav-btn-header"
-            style={{ color: '#8b5cf6' }}
-            onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f5f3ff'}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-          >
-            Platos Guardados
-          </button>
+              <button
+                onClick={() => navigate('/platos')}
+                className="nav-btn-header"
+                style={{ color: '#8b5cf6' }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f5f3ff'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+              >
+                Platos Guardados
+              </button>
+            </>
+          )}
 
           {role === 'admin' && (
             <>
@@ -115,7 +121,29 @@ export default function AppHeader() {
               >
                 Gestión Menús
               </button>
+
+              <button
+                onClick={() => navigate('/admin/usuarios')}
+                className="nav-btn-header"
+                style={{ color: '#8b5cf6' }}
+                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f5f3ff'}
+                onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+              >
+                Administración
+              </button>
             </>
+          )}
+
+          {role === 'admin_usuarios' && (
+            <button
+              onClick={() => navigate('/admin/usuarios')}
+              className="nav-btn-header"
+              style={{ color: '#8b5cf6', fontWeight: '600' }}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f5f3ff'}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+            >
+              Gestión de Usuarios
+            </button>
           )}
         </nav>
 

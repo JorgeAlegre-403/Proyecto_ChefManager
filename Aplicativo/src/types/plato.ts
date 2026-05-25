@@ -21,6 +21,7 @@ export interface Plato {
     nombre: string;
     descripcion: string;
     ingredientes: IngredientePlato[];
+    imagen_url?: string;
     activo: boolean;
     created_at: string;
     updated_at: string;
@@ -29,6 +30,7 @@ export interface Plato {
 export interface CreatePlatoInput {
     nombre: string;
     descripcion: string;
+    imagen_url?: string;
     ingredientes: {
         ingrediente_id: string;
         cantidad: number;

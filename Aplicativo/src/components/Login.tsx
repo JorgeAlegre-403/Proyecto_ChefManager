@@ -27,7 +27,14 @@ export default function Login() {
       if (error) {
         setError(error.message)
       } else if (data.user) {
-        navigate('/listado')
+        // Redireccionar según el rol del usuario
+        if (data.user.email === 'administrador@gmail.com') {
+          navigate('/admin/usuarios')
+        } else if (data.user.email === 'cocinero@gmail.com') {
+          navigate('/listado')
+        } else {
+          navigate('/listado')
+        }
       }
     } catch (err) {
       setError('Error al iniciar sesion')

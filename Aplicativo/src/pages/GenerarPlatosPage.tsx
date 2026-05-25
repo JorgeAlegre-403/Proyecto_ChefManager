@@ -17,6 +17,7 @@ export function GenerarPlatosPage() {
 
   const [nombrePlato, setNombrePlato] = useState('');
   const [descripcionPlato, setDescripcionPlato] = useState('');
+  const [imagenPlato, setImagenPlato] = useState('');
   const [ingredientesSeleccionados, setIngredientesSeleccionados] = useState<
     IngredientePlato[]
   >([]);
@@ -51,6 +52,7 @@ export function GenerarPlatosPage() {
       const plato = resultado.data;
       setNombrePlato(plato.nombre);
       setDescripcionPlato(plato.descripcion);
+      setImagenPlato(plato.imagen_url || '');
       setIngredientesSeleccionados(plato.ingredientes);
     } else {
       setMensajeError('No se pudo cargar el plato para editar');
@@ -142,6 +144,7 @@ export function GenerarPlatosPage() {
     const platoInput = {
       nombre: nombrePlato.trim(),
       descripcion: descripcionPlato.trim(),
+      imagen_url: imagenPlato,
       ingredientes: ingredientesSeleccionados.map((ing) => ({
         ingrediente_id: ing.id,
         cantidad: ing.cantidad,
@@ -164,6 +167,7 @@ export function GenerarPlatosPage() {
       if (!editId) {
         setNombrePlato('');
         setDescripcionPlato('');
+        setImagenPlato('');
         setIngredientesSeleccionados([]);
       }
 
@@ -230,9 +234,11 @@ export function GenerarPlatosPage() {
             <PanelPlato
               nombrePlato={nombrePlato}
               descripcionPlato={descripcionPlato}
+              imagenPlato={imagenPlato}
               ingredientesSeleccionados={ingredientesSeleccionados}
               onNombreChange={setNombrePlato}
               onDescripcionChange={setDescripcionPlato}
+              onImagenChange={setImagenPlato}
               onRemoverIngrediente={handleRemoverIngrediente}
               onCantidadChange={handleCantidadChange}
               onUnidadChange={handleUnidadChange}

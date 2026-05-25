@@ -5,9 +5,11 @@ import { LuTrash2 } from 'react-icons/lu';
 interface PanelPlatoProps {
   nombrePlato: string;
   descripcionPlato: string;
+  imagenPlato: string;
   ingredientesSeleccionados: IngredientePlato[];
   onNombreChange: (nombre: string) => void;
   onDescripcionChange: (descripcion: string) => void;
+  onImagenChange: (imagen: string) => void;
   onRemoverIngrediente: (ingredienteId: string) => void;
   onCantidadChange: (ingredienteId: string, cantidad: number) => void;
   onUnidadChange: (ingredienteId: string, unidad_medida: string) => void;
@@ -16,13 +18,26 @@ interface PanelPlatoProps {
 export function PanelPlato({
   nombrePlato,
   descripcionPlato,
+  imagenPlato,
   ingredientesSeleccionados,
   onNombreChange,
   onDescripcionChange,
+  onImagenChange,
   onRemoverIngrediente,
   onCantidadChange,
   onUnidadChange,
 }: PanelPlatoProps) {
+  const handleImagenChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        onImagenChange(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <div className="pl-6">
       <h2 className="text-2xl font-bold mb-4 text-gray-800">Crear Plato</h2>
@@ -51,6 +66,28 @@ export function PanelPlato({
           rows={3}
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
         />
+      </div>
+
+      <div className="mb-4">
+        <label className="block text-sm font-semibold text-gray-700 mb-1">
+          Imagen del Plato
+        </label>
+        {imagenPlato && (
+          <div className="mb-3 relative">
+            <img
+              src={imagenPlato}
+              alt="Previsualización"
+              className="w-full h-48 object-cover rounded-lg border border-gray-300"
+            />
+          </div>
+        )}
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleImagenChange}
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <p className="text-xs text-gray-500 mt-1">Formatos soportados: JPG, PNG, WebP. Máximo 5MB</p>
       </div>
 
       <div>

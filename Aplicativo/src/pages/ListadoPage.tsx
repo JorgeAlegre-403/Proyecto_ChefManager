@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabaseClient'
 import AppHeader from '../components/AppHeader'
 import '../styles/colors.css'
-import { LuPencil, LuTrash2, LuTriangleAlert, LuX, LuCircleCheck, LuBan, LuSearch } from 'react-icons/lu'
+import { LuPencil, LuTrash2, LuTriangleAlert, LuCircleCheck, LuBan, LuSearch } from 'react-icons/lu'
 import { motion, AnimatePresence } from 'framer-motion'
 
 interface Ingrediente {

@@ -53,14 +53,14 @@ export default function PublicMenuPage() {
       {/* Hero / Header Section */}
       <div className="relative h-64 bg-slate-900 flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 opacity-40">
-          <img 
-            src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&q=80&w=1000" 
-            alt="Restaurant background" 
+          <img
+            src="https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&q=80&w=1000"
+            alt="Restaurant background"
             className="w-full h-full object-cover"
           />
         </div>
         <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-black/20"></div>
-        
+
         <div className="relative text-center px-4">
           <div className="inline-block px-3 py-1 bg-orange-500 text-white text-xs font-bold rounded-full mb-3 uppercase tracking-widest shadow-lg">
             Menú del Día
@@ -70,7 +70,7 @@ export default function PublicMenuPage() {
           </h1>
           <div className="flex items-center justify-center text-orange-200 gap-4 text-sm">
             <span className="flex items-center gap-1">
-              <LuCalendar size={14} /> 
+              <LuCalendar size={14} />
               {new Date(menu.fecha).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
             </span>
           </div>
@@ -80,7 +80,7 @@ export default function PublicMenuPage() {
       {/* Main Menu Content */}
       <div className="max-w-2xl mx-auto -mt-10 px-4 relative z-10">
         <div className="bg-white rounded-3xl shadow-xl shadow-slate-200/50 p-8 md:p-12 border border-slate-100">
-          
+
           <div className="space-y-12">
             {platosPorServicio.map((servicio, sIdx) => (
               <div key={sIdx}>
@@ -91,19 +91,28 @@ export default function PublicMenuPage() {
                   </h2>
                   <div className="h-[1px] flex-grow bg-orange-200"></div>
                 </div>
-                
+
                 <div className="space-y-8">
                   {servicio.platos.map((plato, pIdx) => (
                     <div key={pIdx} className="text-center group">
+
                       <h3 className="text-xl font-bold text-slate-800 mb-2 group-hover:text-orange-600 transition-colors">
                         {plato.nombre}
                       </h3>
                       {plato.descripcion && (
-                        <p className="text-slate-500 text-sm leading-relaxed max-w-md mx-auto italic">
+                        <><p className="text-slate-500 text-sm leading-relaxed max-w-md mx-auto italic">
                           {plato.descripcion}
-                        </p>
+                        </p><br /></>
                       )}
-                      
+                      {plato.imagen_url && (
+                        <div className="mb-4 overflow-hidden rounded-2xl shadow-md">
+                          <img
+                            src={plato.imagen_url}
+                            alt={plato.nombre}
+                            className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                          />
+                        </div>
+                      )}
                       {/* Alérgenos si existieran (opcional) */}
                       {/* <div className="mt-3 flex justify-center gap-2">
                         <span className="w-5 h-5 bg-slate-100 rounded-full flex items-center justify-center text-[10px] font-bold text-slate-400">G</span>
@@ -136,7 +145,7 @@ export default function PublicMenuPage() {
           </div>
         </div>
       </div>
-      
+
       {/* Floating Footer info */}
       <div className="mt-12 text-center text-slate-400 text-xs">
         <p>© {new Date().getFullYear()} TRAZAKITCHEN. Todos los derechos reservados.</p>
