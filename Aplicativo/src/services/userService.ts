@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabaseClient';
+import { supabaseAdmin } from '../lib/supabaseAdmin';
 import type { Usuario, CreateUsuarioInput } from '../types/usuario';
 
 export interface UsuarioResponse {
@@ -191,18 +192,19 @@ export async function enviarEmailReseteoContraseña(email: string): Promise<Usua
 }
 
 // Cambiar contraseña de un usuario (como admin)
+// Usa supabaseAdmin (service_role key) para tener permisos de modificar otros usuarios.
 export async function cambiarContraseñaUsuario(userId: string, nuevaContraseña: string): Promise<UsuarioResponse> {
   try {
-    const { error } = await supabase.auth.admin.updateUserById(userId, {
+    const { error } = await supabaseAdmin.auth.admin.updateUserById(userId, {
       password: nuevaContraseña,
     });
 
     if (error) throw error;
 
-    return { success: true, data: { message: 'Contraseña actualizada' } };
-  } catch (error) {
+    return { success: true, data: { message: 'Contraseña actualizada correctamente' } };
+  } catch (error: any) {
     console.error('Error al cambiar contraseña:', error);
-    return { success: false, error: 'Error al cambiar contraseña del usuario' };
+    return { success: false, error: error?.message || 'Error al cambiar contraseña del usuario' };
   }
 }
 

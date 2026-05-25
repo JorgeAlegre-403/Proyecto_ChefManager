@@ -43,7 +43,7 @@ export default function AppHeader() {
       }}>
         {/* LADO IZQUIERDO: LOGO (Ocupa espacio flexible para empujar al centro) */}
         <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-start' }}>
-          <div 
+          <div
             onClick={() => navigate('/')}
             className="flex items-center gap-2 text-2xl font-bold text-gray-900 group cursor-pointer"
           >
@@ -122,15 +122,6 @@ export default function AppHeader() {
                 Gestión Menús
               </button>
 
-              <button
-                onClick={() => navigate('/admin/usuarios')}
-                className="nav-btn-header"
-                style={{ color: '#8b5cf6' }}
-                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f5f3ff'}
-                onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-              >
-                Administración
-              </button>
             </>
           )}
 
