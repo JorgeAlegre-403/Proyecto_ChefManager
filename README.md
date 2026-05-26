@@ -1,111 +1,194 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/chef-hat.svg" alt="TraceFood Logo" width="80" height="80">
-  <h1 align="center">TraceFood</h1>
+  <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/chef-hat.svg" alt="TRAZAKITCHEN Logo" width="80" height="80">
+  <h1 align="center">TRAZAKITCHEN</h1>
   <p align="center">
     <strong>Sistema Integral de Trazabilidad y Gestión de Almacenes para Cocinas Profesionales</strong>
   </p>
   <p align="center">
-    <a href="#presentacion-del-proyecto">Presentación</a> •
-    <a href="#caracteristicas-principales">Características</a> •
-    <a href="#stack-tecnologico">Stack Tecnológico</a> •
-    <a href="#documentacion-y-manuales">Documentación</a> •
-    <a href="#instalacion-y-despliegue">Instalación</a>
+    <a href="#descripción">Presentación</a> •
+    <a href="#funcionalidades-principales">Características</a> •
+    <a href="#stack-tecnológico">Stack Tecnológico</a> •
+    <a href="#documentación-y-manuales">Documentación</a> •
+    <a href="#puesta-en-marcha">Instalación</a>
   </p>
 </div>
 
----
+# 🍽️ TRAZAKITCHEN — Gestión Integral de Cocina
 
-## Presentación del Proyecto
-
-**Proyecto Trazabilidad (TraceFood)**
-
-Aplicación web interna desarrollada como proyecto del ciclo de Desarrollo de Aplicaciones Web (2º DAW), orientada a la gestión de la trazabilidad alimentaria en entornos de hostelería.
-
-El sistema permite a cocineros y jefes de cocina registrar y consultar productos alimentarios, organizar el almacén por zonas, controlar fechas de entrega y caducidad, y planificar menús semanales en función del inventario disponible. La aplicación implementa roles de usuario para diferenciar permisos y responsabilidades, garantizando un uso seguro y organizado de la información.
-
-El proyecto sigue una arquitectura cliente-servidor, utilizando React para el frontend y Supabase (PostgreSQL) como servicio de base de datos. Está enfocado en ofrecer una solución realista, escalable y alineada con la normativa de trazabilidad, aplicando buenas prácticas de desarrollo web, diseño de bases de datos y control de versiones.
-
-Este proyecto ofrece a los equipos gastronómicos una herramienta unificada para:
-- **Digitalizar la Recepción de Mercancías**: Registrando ingredientes, lotes, proveedores y caducidades de forma estructurada.
-- **Mejorar la Rentabilidad**: Reduciendo el desperdicio mediante la monitorización de caducidades tempranas.
-- **Automatizar la Planificación**: Fomentando el uso de productos bajo el riesgo de pérdida comercial (metodología First Expired, First Out).
-- **Proteger al Consumidor**: Garantizando una trazabilidad inversa inmediata y precisa.
+> Aplicación web para facilitar la gestión diaria de una cocina profesional: control de productos, creación de platos y generación de menús.
 
 ---
 
-## Características Principales
+## 📋 Descripción
 
-- **Registro Dinámico de Productos**: Ingreso estructurado de mercancías indicando proveedor, lote y zona de almacén acordes al producto.
-- **Mapa de Almacén**: Organización lógica del inventario distribuido en sectores como cámaras frigoríficas, cuartos fríos y almacenamiento en seco.
-- **Planificador de Menús (Lógica FEFO)**: Propuesta de uso de inventario guiada por la normativa de seguridad alimentaria vigente.
-- **Sistema de Alertas Visuales**: Provisión de notificaciones respecto a productos próximos a superar la fecha límite de consumo óptimo.
-- **Diseño Adaptativo**: Interfaz plenamente responsiva (Mobile First) que garantiza un uso eficiente tanto en equipos de escritorio como en dispositivos móviles o tablets dentro de las áreas de trabajo.
+**TRAZAKITCHEN** es una herramienta diseñada para equipos de cocina que necesitan organizar y centralizar su trabajo diario. Permite gestionar el catálogo de ingredientes y productos, crear fichas de platos con sus composiciones, generar y publicar menús diarios, y administrar los accesos del personal de forma sencilla.
+
+El objetivo es reducir el tiempo dedicado a tareas administrativas y ofrecer una visión clara y actualizada de lo que se tiene disponible en cocina en todo momento.
 
 ---
 
-## Stack Tecnológico
+## ✨ Funcionalidades principales
 
-El proyecto se estructura basado en una arquitectura moderna combinada con servicios Backend-as-a-Service, garantizando rendimiento y escalabilidad.
+### 🥦 Gestión de Productos / Ingredientes
+- Alta, edición y baja de ingredientes y materias primas.
+- Clasificación por categorías (proteínas, verduras, lácteos, etc.).
+- Registro de información nutricional básica.
+- Listado filtrable y con búsqueda en tiempo real.
 
-| Tecnología | Propósito Funcional |
-| :--- | :--- |
-| **React (v19) + Vite** | Motor central del Frontend e inicialización del proyecto. Garantizan renderizado eficiente y desarrollo optimizado. |
-| **Tailwind CSS (v4)** | Configuración de la interfaz mediante estilización atómica para mantener un diseño consistente y fluido. |
-| **Zustand** | Administración general de estados del cliente. Evita la redundancia de propiedades y sincroniza datos de sesión. |
-| **Supabase** | Motor de base de datos relacional (PostgreSQL), gestión de políticas de seguridad y autenticación. |
-| **React Router (v7)** | Sistema de enrutamiento seguro para navegación entre paneles de control e inventario. |
-| **Framer Motion** | Biblioteca responsable de proveer transiciones de interfaz dinámicas. |
+### 🍲 Gestión de Platos
+- Creación de fichas de platos con nombre, descripción e ingredientes.
+- Asignación de ingredientes del catálogo a cada plato.
+- Generación automática de propuestas de platos a partir del stock disponible.
+- Listado y edición de platos existentes.
+
+### 📅 Generación y Gestión de Menús
+- Creación de menús diarios compuestos por platos del catálogo.
+- Herramienta de generación asistida de menús (primeros, segundos y postres).
+- Gestión y edición de los menús guardados.
+- **Página pública de menú del día** accesible sin necesidad de autenticación (`/menu-diario`).
+
+### 👥 Administración de Usuarios
+- Panel de administración de usuarios del sistema.
+- Sistema de roles diferenciados para controlar los accesos:
+
+| Rol | Acceso |
+|---|---|
+| `admin` | Acceso total a todas las secciones |
+| `jefecocina` | Productos, platos y menús (sin gestión de usuarios) |
+| `cocinero` | Solo productos y platos |
+| `admin_usuarios` | Solo administración de usuarios |
 
 ---
 
-## Documentación y Manuales
+## 🛠️ Stack tecnológico
 
-La documentación académica, técnica y operativa del proyecto ha sido estructurada externamente en formatos PDF (.pdf) y Markdown (.md). 
-
-Toda la información correspondiente al análisis de requerimientos, especificaciones de arquitectura e instrumentación para el usuario puede ser consultada íntegramente en el directorio [`/Documentacion/Manuales/`](./Documentacion/Manuales/).
-
-Nota para la evaluación: En dicha ruta se incluyen los cuatro documentos principales correspondientes a:
-
-1. **Manual de Usuario**: Instrucciones operativas, comprensión del panel principal y registro en el sistema.
-2. **Manual Técnico**: Arquitectura requerida, requisitos funcionales/no funcionales y esquema relacional de datos.
-3. **Manual de Despliegue**: Instrucciones precisas enfocadas a la infraestructura, compilación final y requerimientos locales.
-4. **Manual del Proyecto**: Contexto de su creación, metodología de desarrollo aplicada durante el curso y justificación de viabilidad.
+| Tecnología | Uso |
+|---|---|
+| **React + TypeScript** | Interfaz de usuario |
+| **Vite** | Bundler y servidor de desarrollo |
+| **Supabase** | Base de datos (PostgreSQL), autenticación y API |
+| **React Router v7** | Navegación y rutas protegidas |
+| **Tailwind CSS v4** | Estilos y utilidades CSS |
+| **Framer Motion** | Animaciones e interacciones |
+| **React Icons** | Biblioteca de iconos |
 
 ---
 
-## Instalación y Despliegue
+## 🗂️ Estructura del proyecto
 
-Siga las siguientes instrucciones para replicar el entorno de desarrollo local:
+```
+src/
+├── components/       # Componentes reutilizables (Header, Hero, Login…)
+├── hooks/            # Hooks personalizados (useRole, etc.)
+├── lib/              # Clientes de Supabase (cliente público y admin)
+├── pages/            # Páginas principales de la aplicación
+│   ├── FormularioPage.tsx      # Alta/edición de ingredientes
+│   ├── ListadoPage.tsx         # Listado de ingredientes
+│   ├── GenerarPlatosPage.tsx   # Generador asistido de platos
+│   ├── PlatosPage.tsx          # Listado y gestión de platos
+│   ├── GenerarMenusPage.tsx    # Generador de menús diarios
+│   ├── GestionMenusPage.tsx    # Gestión de menús guardados
+│   ├── PublicMenuPage.tsx      # Menú del día público
+│   ├── ForgotPasswordPage.tsx  # Recuperación de contraseña
+│   └── AdminUsersPage.tsx      # Administración de usuarios
+├── services/         # Lógica de acceso a datos (Supabase)
+├── styles/           # Estilos globales
+└── types/            # Tipos TypeScript compartidos
+```
+
+---
+
+## 📚 Documentación y manuales
+
+La carpeta `Documentacion/Manuales/` incluye los siguientes documentos en formato PDF:
+
+| Documento | Descripción |
+|---|---|
+| `Manual de Usuario.pdf` | Guía de uso de la aplicación para el personal de cocina |
+| `Manual Tecnico.pdf` | Arquitectura, modelo de datos y detalles de implementación |
+| `Manual de Despliegue.pdf` | Instrucciones para desplegar la aplicación en producción |
+| `Manual del Proyecto.pdf` | Descripción general del proyecto y sus objetivos |
+
+---
+
+## 🚀 Puesta en marcha
+
+### Requisitos previos
+- Node.js 18 o superior
+- Una cuenta y proyecto en [Supabase](https://supabase.com)
 
 ### 1. Clonar el repositorio
+
 ```bash
-git clone https://github.com/JorgeAlegre-403/Proyecto_Trazabilidad.git
+git clone <url-del-repositorio>
+cd Aplicativo
 ```
 
-### 2. Navegar al directorio raíz del aplicativo
-```bash
-cd Proyecto_Trazabilidad/Aplicativo
-```
+### 2. Instalar dependencias
 
-### 3. Instalar dependencias
 ```bash
 npm install
 ```
 
-### 4. Configurar Variables de Entorno (.env.local)
-Se deberá crear un archivo `.env.local` en el directorio de la aplicación, incorporando las credenciales preasignadas en el servidor Supabase:
+### 3. Configurar variables de entorno
+
+Crea un archivo `.env.local` en la raíz del proyecto con las siguientes claves:
+
 ```env
-VITE_SUPABASE_URL=tu_url_de_supabase
-VITE_SUPABASE_ANON_KEY=tu_clave_anonima
+VITE_SUPABASE_URL=https://<tu-proyecto>.supabase.co
+VITE_SUPABASE_ANON_KEY=<tu-anon-key>
+VITE_SUPABASE_SERVICE_ROLE_KEY=<tu-service-role-key>
 ```
 
-### 5. Ejecutar el servidor de desarrollo
+> ⚠️ La `SERVICE_ROLE_KEY` se utiliza únicamente en operaciones de administración de usuarios y nunca se expone al cliente final.
+
+### 4. Iniciar el servidor de desarrollo
+
 ```bash
 npm run dev
 ```
 
+La aplicación estará disponible en `http://localhost:5173`.
+
 ---
 
-<div align="center">
-  <p>Software construido para optimizar la eficiencia y seguridad administrativa del sector gastronómico.</p>
-</div>
+## 🔐 Autenticación y roles
+
+El sistema utiliza **Supabase Auth** para la gestión de sesiones. Los roles se almacenan en la tabla `usuarios_app` de la base de datos y se leen mediante el hook `useRole`. Esto permite que el administrador asigne y modifique roles sin necesidad de tocar el código.
+
+Las rutas protegidas redirigen automáticamente al inicio de sesión si el usuario no está autenticado, o a la sección permitida si su rol no tiene acceso a la ruta solicitada.
+
+---
+
+## 🌐 Rutas disponibles
+
+| Ruta | Descripción | Acceso |
+|---|---|---|
+| `/` | Landing page | Público |
+| `/login` | Inicio de sesión | Público |
+| `/menu-diario` | Menú del día | Público |
+| `/recuperar-contrasena` | Recuperación de contraseña | Público |
+| `/formulario` | Alta/edición de ingredientes | Autenticado |
+| `/listado` | Listado de ingredientes | Autenticado |
+| `/generar-platos` | Generador de platos | Autenticado |
+| `/platos` | Gestión de platos | Autenticado |
+| `/generar-menus` | Generador de menús | admin / jefecocina |
+| `/gestion-menus` | Gestión de menús | admin / jefecocina |
+| `/admin/usuarios` | Administración de usuarios | admin / admin_usuarios |
+
+---
+
+## 📦 Scripts disponibles
+
+```bash
+npm run dev       # Servidor de desarrollo
+npm run build     # Build de producción
+npm run preview   # Vista previa del build
+npm run lint      # Análisis estático del código
+```
+
+---
+
+## 📄 Licencia
+
+Proyecto de uso interno. Todos los derechos reservados.
