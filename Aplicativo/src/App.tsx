@@ -39,8 +39,8 @@ function HomePage() {
  * de user_metadata ni de emails hardcodeados.
  *
  * Permisos por rol:
- *   - admin        → acceso total
- *   - jefecocina   → acceso a alimentos, platos y menús (igual que admin, excepto /admin/usuarios)
+ *   - admin        → solo /admin/usuarios (gestión de usuarios)
+ *   - jefecocina   → acceso a alimentos, platos y menús (sin /admin/usuarios)
  *   - cocinero     → acceso a alimentos y platos (sin gestión de menús)
  *   - admin_usuarios → solo /admin/usuarios
  */
@@ -83,8 +83,8 @@ function ProtectedRoute({
 
   // --- Restricciones por rol ---
 
-  // admin_usuarios: solo puede acceder a /admin/usuarios
-  if (role === 'admin_usuarios') {
+  // admin y admin_usuarios: solo pueden acceder a /admin/usuarios
+  if (role === 'admin' || role === 'admin_usuarios') {
     return requiredRole === 'admin_usuarios' ? <>{children}</> : <Navigate to="/admin/usuarios" replace />
   }
 
@@ -98,7 +98,7 @@ function ProtectedRoute({
     return <Navigate to="/listado" replace />
   }
 
-  // admin y jefecocina tienen acceso a rutas 'admin' (menús, etc.)
+  // jefecocina y cocinero tienen acceso a sus rutas correspondientes
   return <>{children}</>
 }
 

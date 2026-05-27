@@ -151,69 +151,17 @@ export default function AppHeader() {
             </>
           )}
 
-          {/* Admin completo: acceso a todo */}
+          {/* Admin: solo gestión de usuarios */}
           {role === 'admin' && (
-            <>
-              <button
-                onClick={() => navigate('/formulario')}
-                className="nav-btn-header"
-                style={{ color: '#3b82f6' }}
-                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#eff6ff'}
-                onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-              >
-                Agregar Alimento
-              </button>
-
-              <button
-                onClick={() => navigate('/listado')}
-                className="nav-btn-header"
-                style={{ color: '#10b981' }}
-                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#ecfdf5'}
-                onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-              >
-                Ver Listado
-              </button>
-
-              <button
-                onClick={() => navigate('/generar-platos')}
-                className="nav-btn-header"
-                style={{ color: '#8b5cf6' }}
-                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f5f3ff'}
-                onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-              >
-                Generar Platos
-              </button>
-
-              <button
-                onClick={() => navigate('/platos')}
-                className="nav-btn-header"
-                style={{ color: '#8b5cf6' }}
-                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f5f3ff'}
-                onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-              >
-                Platos Guardados
-              </button>
-
-              <button
-                onClick={() => navigate('/generar-menus')}
-                className="nav-btn-header"
-                style={{ color: '#ea580c' }}
-                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#fff7ed'}
-                onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-              >
-                Generar Menús
-              </button>
-
-              <button
-                onClick={() => navigate('/gestion-menus')}
-                className="nav-btn-header"
-                style={{ color: '#f97316' }}
-                onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#fff7ed'}
-                onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-              >
-                Gestión Menús
-              </button>
-            </>
+            <button
+              onClick={() => navigate('/admin/usuarios')}
+              className="nav-btn-header"
+              style={{ color: '#8b5cf6', fontWeight: '600' }}
+              onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#f5f3ff'}
+              onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+            >
+              Gestión de Usuarios
+            </button>
           )}
 
           {/* Admin de usuarios: solo gestión de usuarios */}

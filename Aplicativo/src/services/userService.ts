@@ -208,6 +208,80 @@ export async function cambiarContraseñaUsuario(userId: string, nuevaContraseña
   }
 }
 
+// Crear solicitud de cambio de contraseña (desde la pantalla "Olvidé mi contraseña")
+export async function crearSolicitudContrasena(email: string): Promise<UsuarioResponse> {
+  try {
+    // Verificar que el email existe en usuarios_app
+    const { data: usuario, error: findError } = await supabase
+      .from('usuarios_app')
+      .select('id, email, role')
+      .eq('email', email)
+      .single();
+
+    if (findError || !usuario) {
+      // Por seguridad, no revelar si el email existe o no
+      return { success: true, data: { message: 'Solicitud registrada' } };
+    }
+
+    // Solo permitir solicitudes de cocinero y jefecocina
+    if (usuario.role === 'admin' || usuario.role === 'admin_usuarios') {
+      return { success: true, data: { message: 'Solicitud registrada' } };
+    }
+
+    // Insertar la solicitud
+    const { error } = await supabase
+      .from('solicitudes_contrasena')
+      .insert({
+        usuario_id: usuario.id,
+        email: email,
+        estado: 'pendiente',
+      });
+
+    if (error) throw error;
+
+    return { success: true, data: { message: 'Solicitud registrada correctamente' } };
+  } catch (error: any) {
+    console.error('Error al crear solicitud de contraseña:', error);
+    return { success: false, error: 'Error al registrar la solicitud' };
+  }
+}
+
+// Obtener solicitudes pendientes de cambio de contraseña
+export async function obtenerSolicitudesPendientes(): Promise<UsuarioResponse> {
+  try {
+    const { data, error } = await supabase
+      .from('solicitudes_contrasena')
+      .select('*')
+      .eq('estado', 'pendiente')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    return { success: true, data: data || [] };
+  } catch (error: any) {
+    console.error('Error al obtener solicitudes:', error);
+    return { success: false, error: 'Error al obtener solicitudes pendientes' };
+  }
+}
+
+// Marcar como resuelta la solicitud de un usuario (tras cambiar su contraseña)
+export async function resolverSolicitudesContrasena(usuarioId: string): Promise<UsuarioResponse> {
+  try {
+    const { error } = await supabase
+      .from('solicitudes_contrasena')
+      .update({ estado: 'resuelta', resuelta_at: new Date().toISOString() })
+      .eq('usuario_id', usuarioId)
+      .eq('estado', 'pendiente');
+
+    if (error) throw error;
+
+    return { success: true, data: { message: 'Solicitud resuelta' } };
+  } catch (error: any) {
+    console.error('Error al resolver solicitud:', error);
+    return { success: false, error: 'Error al resolver la solicitud' };
+  }
+}
+
 // Obtener usuario actual
 export async function obtenerUsuarioActual(): Promise<UsuarioResponse> {
   try {

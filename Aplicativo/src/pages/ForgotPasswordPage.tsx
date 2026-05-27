@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { supabase } from '../lib/supabaseClient';
-import { LuMail, LuArrowLeft, LuCheck, LuLoader } from 'react-icons/lu';
+import { LuMail, LuArrowLeft, LuCheck, LuLoader, LuBell } from 'react-icons/lu';
 import { motion } from 'framer-motion';
+import { crearSolicitudContrasena } from '../services/userService';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -16,17 +16,15 @@ export default function ForgotPasswordPage() {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/login`,
-      });
+      const resultado = await crearSolicitudContrasena(email.trim().toLowerCase());
 
-      if (error) {
-        setError(error.message);
-      } else {
+      if (resultado.success) {
         setSuccess(true);
+      } else {
+        setError('No se pudo registrar la solicitud. Inténtalo de nuevo.');
       }
-    } catch (err) {
-      setError('Error al enviar el correo de recuperación');
+    } catch {
+      setError('Error inesperado. Inténtalo de nuevo.');
     } finally {
       setLoading(false);
     }
@@ -55,7 +53,7 @@ export default function ForgotPasswordPage() {
 
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Recuperar Contraseña</h1>
           <p className="text-gray-500 text-sm mb-8">
-            Ingresa tu correo electrónico y te enviaremos las instrucciones para restablecer tu contraseña.
+            Ingresa tu correo electrónico y el administrador recibirá un aviso para cambiarte la contraseña.
           </p>
 
           {success ? (
@@ -63,10 +61,13 @@ export default function ForgotPasswordPage() {
               <div className="inline-flex items-center justify-center bg-green-100 text-green-600 p-2 rounded-full mb-4">
                 <LuCheck className="w-6 h-6" />
               </div>
-              <p className="text-green-800 font-medium mb-2">¡Correo enviado!</p>
-              <p className="text-green-700 text-xs mb-6">
-                Revisa tu bandeja de entrada para continuar con el proceso.
-              </p>
+              <p className="text-green-800 font-semibold mb-2">¡Solicitud enviada!</p>
+              <div className="flex items-start gap-2 bg-green-100/60 rounded-xl p-3 mb-5 text-left">
+                <LuBell className="w-4 h-4 text-green-700 mt-0.5 shrink-0" />
+                <p className="text-green-700 text-xs">
+                  El administrador ha sido notificado y te cambiará la contraseña desde el panel de gestión de usuarios. Vuelve a intentar iniciar sesión una vez que te avise.
+                </p>
+              </div>
               <Link
                 to="/login"
                 className="block w-full py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-semibold text-sm transition-all"
@@ -108,10 +109,10 @@ export default function ForgotPasswordPage() {
                 {loading ? (
                   <>
                     <LuLoader className="w-4 h-4 animate-spin" />
-                    Enviando...
+                    Enviando solicitud...
                   </>
                 ) : (
-                  'Enviar instrucciones'
+                  'Solicitar cambio de contraseña'
                 )}
               </button>
 
