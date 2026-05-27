@@ -1,6 +1,6 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/chef-hat.svg" alt="TRAZAKITCHEN Logo" width="80" height="80">
-  <h1 align="center">TRAZAKITCHEN</h1>
+  <img src="https://raw.githubusercontent.com/lucide-icons/lucide/main/icons/chef-hat.svg" alt="CHEFMANAGER Logo" width="80" height="80">
+  <h1 align="center">CHEFMANAGER</h1>
   <p align="center">
     <strong>Sistema Integral de Trazabilidad y Gestión de Almacenes para Cocinas Profesionales</strong>
   </p>
@@ -13,7 +13,7 @@
   </p>
 </div>
 
-# 🍽️ TRAZAKITCHEN — Gestión Integral de Cocina
+# 🍽️ CHEFMANAGER — Gestión Integral de Cocina
 
 > Aplicación web para facilitar la gestión diaria de una cocina profesional: control de productos, creación de platos y generación de menús.
 
@@ -21,7 +21,7 @@
 
 ## 📋 Descripción
 
-**TRAZAKITCHEN** es una herramienta diseñada para equipos de cocina que necesitan organizar y centralizar su trabajo diario. Permite gestionar el catálogo de ingredientes y productos, crear fichas de platos con sus composiciones, generar y publicar menús diarios, y administrar los accesos del personal de forma sencilla.
+**CHEFMANAGER** es una herramienta diseñada para equipos de cocina que necesitan organizar y centralizar su trabajo diario. Permite gestionar el catálogo de ingredientes y productos, crear fichas de platos con sus composiciones, generar y publicar menús diarios, y administrar los accesos del personal de forma sencilla.
 
 El objetivo es reducir el tiempo dedicado a tareas administrativas y ofrecer una visión clara y actualizada de lo que se tiene disponible en cocina en todo momento.
 
