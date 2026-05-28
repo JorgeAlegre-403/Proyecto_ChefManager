@@ -59,7 +59,7 @@ const Roles = () => {
                     transition={{ duration: 0.6 }}
                 >
                     <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4 tracking-tight">
-                        Los tres pilares de TRAZAKITCHEN
+                        Los tres pilares de ChefManager
                     </h2>
                     <p className="text-lg text-gray-600 max-w-2xl mx-auto">
                         Cada rol tiene funcionalidades específicas diseñadas para sus necesidades exactas en la gestión del restaurante.

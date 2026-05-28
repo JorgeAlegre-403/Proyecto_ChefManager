@@ -8,7 +8,7 @@ const Footer = () => {
 
           <div className="flex flex-col items-center md:items-start max-w-xs text-center md:text-left">
             <div className="flex items-center gap-2 text-2xl font-bold text-orange-400 mb-4">
-              <LuChefHat className="text-3xl" /> TRAZAKITCHEN
+              <LuChefHat className="text-3xl" /> ChefManager
             </div>
             <p className="text-gray-400 text-sm leading-relaxed">
               Elevando la creación de menús diarios con un control de trazabilidad de última generación. La excelencia empieza en la gestión.
@@ -36,7 +36,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-gray-800 mt-12 pt-8 text-center md:text-left flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
-          <p>© {new Date().getFullYear()} TRAZAKITCHEN. Todos los derechos reservados.</p>
+          <p>© {new Date().getFullYear()} ChefManager. Todos los derechos reservados.</p>
           <div className="flex space-x-4 mt-4 md:mt-0">
             <a href="#" className="hover:text-white transition-colors">Twitter</a>
             <a href="#" className="hover:text-white transition-colors">LinkedIn</a>

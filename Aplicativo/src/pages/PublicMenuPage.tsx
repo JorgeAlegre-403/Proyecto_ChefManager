@@ -137,7 +137,7 @@ export default function PublicMenuPage() {
           <div className="mt-16 pt-8 border-t border-slate-100 text-center">
             <div className="flex items-center justify-center gap-2 text-slate-400 text-sm mb-4">
               <LuMapPin size={14} />
-              <span>TRAZAKITCHEN</span>
+              <span>ChefManager</span>
             </div>
             <p className="text-slate-300 text-xs uppercase tracking-widest font-semibold">
               ¡Que aproveche!
@@ -148,7 +148,7 @@ export default function PublicMenuPage() {
 
       {/* Floating Footer info */}
       <div className="mt-12 text-center text-slate-400 text-xs">
-        <p>© {new Date().getFullYear()} TRAZAKITCHEN. Todos los derechos reservados.</p>
+        <p>© {new Date().getFullYear()} ChefManager. Todos los derechos reservados.</p>
       </div>
     </div>
   )

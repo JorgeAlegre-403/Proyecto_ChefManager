@@ -27,7 +27,7 @@ const Header = () => {
                         <div className="bg-orange-600 text-white p-1.5 rounded-lg group-hover:bg-orange-700 transition-colors">
                             <LuChefHat className="w-6 h-6" />
                         </div>
-                        <span className="tracking-tight">TRAZAKITCHEN</span>
+                        <span className="tracking-tight">ChefManager</span>
                     </div>
 
                     <nav className="hidden md:flex items-center gap-8">
