@@ -180,10 +180,14 @@ export function GenerarPlatosPage() {
         const nombreUsado = typeof item === 'string' ? item : (item.nombre || '');
         const cantidadUsada = typeof item === 'string' ? 1 : (Number(item.cantidad) || 1);
 
+        // Limpiamos el nombre por si la IA incluye paréntesis u otras cosas
+        const nombreLimpioIA = nombreUsado.replace(/\s*\(.*?\)\s*/g, '').toLowerCase().trim();
+
         // Buscamos ignorando mayúsculas y espacios
-        const encontrado = ingredientes.find(ing => 
-          ing.nombre.toLowerCase().trim() === nombreUsado.toLowerCase().trim()
-        );
+        const encontrado = ingredientes.find(ing => {
+          const nombreIngLimpio = ing.nombre.toLowerCase().trim();
+          return nombreIngLimpio === nombreLimpioIA || nombreLimpioIA.includes(nombreIngLimpio);
+        });
         if (encontrado) {
           ingredientesParaGuardar.push({
             ingrediente_id: encontrado.id,

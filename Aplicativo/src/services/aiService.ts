@@ -45,14 +45,14 @@ export async function sugerirPlatosPorIngredientes(ingredientes: string[]): Prom
 Eres un chef experto. Tengo los siguientes ingredientes (con su unidad de medida): ${ingredientes.join(', ')}. 
 
 Sugiéreme 3 platos deliciosos y muy rápidos de hacer.
-IMPORTANTE: Devuelve ÚNICAMENTE un objeto JSON válido con este formato exacto, sin bloques de código markdown (\`\`\`json) ni texto adicional:
+Escribe un objeto JSON válido con este formato exacto, sin bloques de código markdown (\`\`\`json) ni texto adicional:
 {
   "platos": [
     {
       "nombre": "Nombre del plato",
       "descripcion": "Instrucción muy breve (1 línea) de cómo prepararlo.",
       "ingredientes_usados": [
-        { "nombre": "nombre exacto del ingrediente de la lista", "cantidad": 1.5 }
+        { "nombre": "nombre del ingrediente SIN la unidad de medida", "cantidad": 1.5 }
       ],
       "faltan": ["ingrediente faltante 1"]
     }
