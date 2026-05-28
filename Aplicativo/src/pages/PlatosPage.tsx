@@ -14,22 +14,17 @@ export default function PlatosPage() {
   const [idPlatoAEliminar, setIdPlatoAEliminar] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    cargarPlatos();
-  }, []);
+  useEffect(() => { cargarPlatos(); }, []);
 
   const cargarPlatos = async () => {
     setLoading(true);
     const resultado = await platoService.obtenerPlatos();
-    if (resultado.success) {
-      setPlatos(resultado.data);
-    }
+    if (resultado.success) setPlatos(resultado.data);
     setLoading(false);
   };
 
   const handleEliminarPlato = async () => {
     if (!idPlatoAEliminar) return;
-
     const resultado = await platoService.eliminarPlato(idPlatoAEliminar);
     if (resultado.success) {
       setMensaje({ texto: 'Plato eliminado exitosamente', tipo: 'success' });
@@ -41,22 +36,23 @@ export default function PlatosPage() {
     setIdPlatoAEliminar(null);
   };
 
-  const handleEditarPlato = (platoId: string) => {
-    navigate(`/generar-platos?edit=${platoId}`);
-  };
+  const handleEditarPlato = (platoId: string) => navigate(`/generar-platos?edit=${platoId}`);
 
   return (
     <div className="min-h-screen bg-gray-50">
       <AppHeader />
-      <div className="max-w-7xl mx-auto p-6">
-        <div className="flex justify-between items-center mb-8">
+      <div className="max-w-7xl mx-auto p-4 md:p-6">
+
+        {/* Cabecera */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem', gap: '1rem', flexWrap: 'wrap' }}>
           <div>
-            <h1 className="text-3xl font-bold text-gray-800">Platos Guardados</h1>
-            <p className="text-gray-500 mt-1">Gestiona tus recetas y consulta sus ingredientes</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Platos Guardados</h1>
+            <p className="text-gray-500 mt-1 text-sm">Gestiona tus recetas y consulta sus ingredientes</p>
           </div>
           <button
             onClick={() => navigate('/generar-platos')}
-            className="flex items-center gap-2 px-5 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-xl transition-all shadow-lg shadow-orange-600/20"
+            className="flex items-center gap-2 px-4 py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-semibold rounded-xl transition-all shadow-lg shadow-orange-600/20"
+            style={{ fontSize: '14px', flexShrink: 0 }}
           >
             <LuPlus className="w-5 h-5" />
             Nuevo Plato
@@ -64,92 +60,110 @@ export default function PlatosPage() {
         </div>
 
         {mensaje.texto && (
-          <div className={`mb-6 p-4 rounded-xl border ${mensaje.tipo === 'success' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'
-            }`}>
+          <div className={`mb-4 p-4 rounded-xl border ${mensaje.tipo === 'success' ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-700'}`}>
             {mensaje.texto}
           </div>
         )}
 
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-          {loading ? (
-            <div className="p-12 text-center text-gray-500">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto mb-4"></div>
-              Cargando platos...
-            </div>
-          ) : platos.length === 0 ? (
-            <div className="p-12 text-center text-gray-500">
-              <p className="text-lg">No se han encontrado platos creados.</p>
-              <button
-                onClick={() => navigate('/generar-platos')}
-                className="mt-4 text-orange-600 font-medium hover:underline"
-              >
-                Crea tu primer plato aquí
-              </button>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50 border-b border-gray-100">
-                  <tr>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Nombre</th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Descripción</th>
-                    <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Ingredientes</th>
-                    <th className="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Acciones</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {platos.map((plato) => (
-                    <tr key={plato.id} className="hover:bg-gray-50/50 transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="font-semibold text-gray-900">{plato.nombre}</div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="text-sm text-gray-600 max-w-xs truncate">{plato.descripcion || 'Sin descripción'}</div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <button
-                          onClick={() => setPlatoVerIngredientes(plato)}
-                          className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 text-orange-700 hover:bg-orange-100 rounded-lg text-xs font-bold transition-colors group"
-                        >
-                          <LuEye className="w-3.5 h-3.5" />
-                          Ver {plato.ingredientes.length} ingredientes
-                        </button>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <div className="flex justify-end gap-2">
-                          <button
-                            onClick={() => handleEditarPlato(plato.id)}
-                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                            title="Editar"
-                          >
-                            <LuPencil className="w-5 h-5" />
-                          </button>
-                          <button
-                            onClick={() => setIdPlatoAEliminar(plato.id)}
-                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                            title="Eliminar"
-                          >
-                            <LuTrash2 className="w-5 h-5" />
-                          </button>
-                        </div>
-                      </td>
+        {loading ? (
+          <div className="p-12 text-center text-gray-500 bg-white rounded-2xl shadow-sm border border-gray-100">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto mb-4"></div>
+            Cargando platos...
+          </div>
+        ) : platos.length === 0 ? (
+          <div className="p-12 text-center text-gray-500 bg-white rounded-2xl shadow-sm border border-gray-100">
+            <p className="text-lg">No se han encontrado platos creados.</p>
+            <button onClick={() => navigate('/generar-platos')} className="mt-4 text-orange-600 font-medium hover:underline">
+              Crea tu primer plato aquí
+            </button>
+          </div>
+        ) : (
+          <>
+            {/* ── TABLA desktop ── */}
+            <div className="platos-table-wrap bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50 border-b border-gray-100">
+                    <tr>
+                      <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Nombre</th>
+                      <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Descripción</th>
+                      <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Ingredientes</th>
+                      <th className="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-wider">Acciones</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {platos.map((plato) => (
+                      <tr key={plato.id} className="hover:bg-gray-50/50 transition-colors">
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="font-semibold text-gray-900">{plato.nombre}</div>
+                        </td>
+                        <td className="px-6 py-4">
+                          <div className="text-sm text-gray-600 max-w-xs truncate">{plato.descripcion || 'Sin descripción'}</div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <button
+                            onClick={() => setPlatoVerIngredientes(plato)}
+                            className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-50 text-orange-700 hover:bg-orange-100 rounded-lg text-xs font-bold transition-colors"
+                          >
+                            <LuEye className="w-3.5 h-3.5" />
+                            Ver {plato.ingredientes.length} ingredientes
+                          </button>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right">
+                          <div className="flex justify-end gap-2">
+                            <button onClick={() => handleEditarPlato(plato.id)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Editar"><LuPencil className="w-5 h-5" /></button>
+                            <button onClick={() => setIdPlatoAEliminar(plato.id)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Eliminar"><LuTrash2 className="w-5 h-5" /></button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
-          )}
-        </div>
+
+            {/* ── CARDS móvil ── */}
+            <div className="platos-cards-wrap" style={{ display: 'none', flexDirection: 'column', gap: '0.85rem' }}>
+              {platos.map((plato) => (
+                <div key={plato.id} style={{
+                  backgroundColor: 'white', borderRadius: '14px', padding: '1.1rem',
+                  boxShadow: '0 1px 4px rgba(0,0,0,0.08)', border: '1px solid #e5e7eb',
+                }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.5rem' }}>
+                    <div style={{ fontWeight: '700', fontSize: '16px', color: '#111827', flex: 1, paddingRight: '0.5rem' }}>{plato.nombre}</div>
+                    <div style={{ display: 'flex', gap: '0.35rem', flexShrink: 0 }}>
+                      <button onClick={() => handleEditarPlato(plato.id)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"><LuPencil size={18} /></button>
+                      <button onClick={() => setIdPlatoAEliminar(plato.id)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"><LuTrash2 size={18} /></button>
+                    </div>
+                  </div>
+                  {plato.descripcion && (
+                    <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '0.75rem' }}>{plato.descripcion}</p>
+                  )}
+                  <button
+                    onClick={() => setPlatoVerIngredientes(plato)}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: '0.5rem',
+                      padding: '0.55rem 0.9rem', backgroundColor: '#fff7ed',
+                      color: '#c2410c', border: '1px solid #fed7aa',
+                      borderRadius: '8px', fontSize: '13px', fontWeight: '600', cursor: 'pointer',
+                    }}
+                  >
+                    <LuEye size={15} />
+                    Ver {plato.ingredientes.length} ingredientes
+                  </button>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
 
-      {/* Modal de Ingredientes */}
+      {/* Modal Ingredientes */}
       <AnimatePresence>
         {platoVerIngredientes && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
             <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 20 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }}
               className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden"
             >
               <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-orange-50/30">
@@ -157,27 +171,19 @@ export default function PlatosPage() {
                   <h3 className="text-xl font-bold text-gray-900">{platoVerIngredientes.nombre}</h3>
                   <p className="text-sm text-gray-500 mt-0.5">Lista de ingredientes necesarios</p>
                 </div>
-                <button
-                  onClick={() => setPlatoVerIngredientes(null)}
-                  className="p-2 hover:bg-gray-200/50 rounded-full transition-colors text-gray-400 hover:text-gray-600"
-                >
+                <button onClick={() => setPlatoVerIngredientes(null)} className="p-2 hover:bg-gray-200/50 rounded-full transition-colors text-gray-400 hover:text-gray-600">
                   <LuX className="w-6 h-6" />
                 </button>
               </div>
-
               <div className="p-6">
-                <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+                <div className="space-y-3 max-h-[55vh] overflow-y-auto pr-1">
                   {platoVerIngredientes.ingredientes.length > 0 ? (
                     platoVerIngredientes.ingredientes.map((ing, index) => (
-                      <div key={index} className="flex justify-between items-center p-3 bg-gray-50 border border-gray-100 rounded-xl hover:bg-gray-100 transition-colors">
+                      <div key={index} className="flex justify-between items-center p-3 bg-gray-50 border border-gray-100 rounded-xl">
                         <span className="font-medium text-gray-800">{ing.nombre}</span>
                         <div className="flex items-center gap-1.5">
-                          <span className="px-2 py-0.5 bg-white border border-gray-200 rounded-md text-sm font-bold text-orange-600">
-                            {ing.cantidad}
-                          </span>
-                          <span className="text-xs font-semibold text-gray-500 uppercase">
-                            {ing.unidad_medida}
-                          </span>
+                          <span className="px-2 py-0.5 bg-white border border-gray-200 rounded-md text-sm font-bold text-orange-600">{ing.cantidad}</span>
+                          <span className="text-xs font-semibold text-gray-500 uppercase">{ing.unidad_medida}</span>
                         </div>
                       </div>
                     ))
@@ -188,12 +194,8 @@ export default function PlatosPage() {
                     </div>
                   )}
                 </div>
-
-                <div className="mt-8">
-                  <button
-                    onClick={() => setPlatoVerIngredientes(null)}
-                    className="w-full py-3 bg-gray-900 hover:bg-black text-white font-bold rounded-xl transition-all active:scale-[0.98]"
-                  >
+                <div className="mt-6">
+                  <button onClick={() => setPlatoVerIngredientes(null)} className="w-full py-3 bg-gray-900 hover:bg-black text-white font-bold rounded-xl transition-all active:scale-[0.98]">
                     Cerrar ventana
                   </button>
                 </div>
@@ -203,45 +205,36 @@ export default function PlatosPage() {
         )}
       </AnimatePresence>
 
-      {/* Modal de Confirmación de Eliminación */}
+      {/* Modal Eliminar */}
       <AnimatePresence>
         {idPlatoAEliminar && (
           <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/50 backdrop-blur-md">
             <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 10 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              initial={{ opacity: 0, scale: 0.95, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.95, y: 10 }}
               className="bg-white w-full max-w-sm rounded-3xl shadow-2xl overflow-hidden border border-red-100"
             >
               <div className="p-8 text-center">
                 <div className="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 text-red-500">
                   <LuTriangleAlert className="w-10 h-10" />
                 </div>
-
                 <h3 className="text-2xl font-bold text-gray-900 mb-2">¿Estás seguro?</h3>
-                <p className="text-gray-500 mb-8 px-2">
-                  Esta acción eliminará el plato de forma permanente. No podrás recuperar esta receta después.
-                </p>
-
+                <p className="text-gray-500 mb-8 px-2">Esta acción eliminará el plato de forma permanente.</p>
                 <div className="flex flex-col gap-3">
-                  <button
-                    onClick={handleEliminarPlato}
-                    className="w-full py-4 bg-red-600 hover:bg-red-700 text-white font-bold rounded-2xl transition-all shadow-lg shadow-red-600/20 active:scale-[0.98]"
-                  >
-                    Sí, eliminar plato
-                  </button>
-                  <button
-                    onClick={() => setIdPlatoAEliminar(null)}
-                    className="w-full py-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-2xl transition-all active:scale-[0.98]"
-                  >
-                    No, mantener plato
-                  </button>
+                  <button onClick={handleEliminarPlato} className="w-full py-4 bg-red-600 hover:bg-red-700 text-white font-bold rounded-2xl transition-all active:scale-[0.98]">Sí, eliminar plato</button>
+                  <button onClick={() => setIdPlatoAEliminar(null)} className="w-full py-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-2xl transition-all active:scale-[0.98]">No, mantener plato</button>
                 </div>
               </div>
             </motion.div>
           </div>
         )}
       </AnimatePresence>
+
+      <style>{`
+        @media (max-width: 767px) {
+          .platos-table-wrap { display: none !important; }
+          .platos-cards-wrap { display: flex !important; }
+        }
+      `}</style>
     </div>
   );
 }
