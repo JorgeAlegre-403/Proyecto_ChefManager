@@ -138,6 +138,7 @@ Crea un archivo `.env.local` en la raíz del proyecto con las siguientes claves:
 VITE_SUPABASE_URL=https://<tu-proyecto>.supabase.co
 VITE_SUPABASE_ANON_KEY=<tu-anon-key>
 VITE_SUPABASE_SERVICE_ROLE_KEY=<tu-service-role-key>
+VITE_GEMINI_API_KEY=tu_clave_api_aqui
 ```
 
 > ⚠️ La `SERVICE_ROLE_KEY` se utiliza únicamente en operaciones de administración de usuarios y nunca se expone al cliente final.
