@@ -72,8 +72,8 @@ export default function GestionMenusPage() {
     <div className="min-h-screen bg-[#F8FAFC]">
       <AppHeader />
 
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
+      <main className="max-w-7xl mx-auto px-4 py-6 md:py-8">
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1.5rem', gap: '1rem', flexWrap: 'wrap' }}>
           <div>
             <button
               onClick={() => navigate(-1)}
@@ -81,15 +81,16 @@ export default function GestionMenusPage() {
             >
               <LuChevronLeft className="mr-1" /> Volver
             </button>
-            <h1 className="text-3xl font-bold text-slate-900">Gestión de Menús</h1>
-            <p className="text-slate-500">Administra tus menús y selecciona cuál mostrar a tus clientes.</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-slate-900">Gestión de Menús</h1>
+            <p className="text-slate-500 text-sm md:text-base">Administra tus menús y selecciona cuál mostrar a tus clientes.</p>
           </div>
 
           <button
             onClick={() => navigate('/generar-menus')}
-            className="px-6 py-3 bg-orange-500 text-white rounded-xl font-semibold hover:bg-orange-600 transition-all shadow-lg shadow-orange-200 flex items-center gap-2"
+            className="px-4 py-2.5 md:px-6 md:py-3 bg-orange-500 text-white rounded-xl font-semibold hover:bg-orange-600 transition-all shadow-lg shadow-orange-200 flex items-center gap-2"
+            style={{ fontSize: '14px', flexShrink: 0 }}
           >
-            <LuChefHat size={20} /> Crear Nuevo Menú
+            <LuChefHat size={18} /> Crear Menú
           </button>
         </div>
 
@@ -130,7 +131,7 @@ export default function GestionMenusPage() {
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {menus.map((menu) => (
               <div
                 key={menu.id}

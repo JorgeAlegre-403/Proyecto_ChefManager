@@ -79,20 +79,41 @@ export default function FormularioPage() {
     }
   }
 
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    padding: '0.75rem 1rem',
+    border: '1px solid #d1d5db',
+    borderRadius: '10px',
+    fontSize: '16px', // 16px evita zoom automático en iOS
+    backgroundColor: '#f9fafb',
+    transition: 'border-color 0.2s',
+    boxSizing: 'border-box',
+  }
+
+  const labelStyle: React.CSSProperties = {
+    display: 'block',
+    marginBottom: '0.5rem',
+    fontWeight: '600',
+    fontSize: '14px',
+    color: '#374151',
+  }
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', backgroundColor: '#f9fafb', overflow: 'hidden' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: '#f9fafb' }}>
       <AppHeader />
 
       <div style={{
         flex: 1,
         display: 'flex',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         justifyContent: 'center',
-        padding: '1.5rem',
+        padding: '1.5rem 1rem',
       }}>
         <div style={{ width: '100%', maxWidth: '900px' }}>
-          <div style={{ marginBottom: '2rem', textAlign: 'center' }}>
-            <h2 style={{ fontSize: '30px', fontWeight: '800', color: '#111827', marginBottom: '0.5rem' }}>Agregar Nuevo Alimento</h2>
+          <div style={{ marginBottom: '1.5rem', textAlign: 'center' }}>
+            <h1 style={{ fontSize: '26px', fontWeight: '800', color: '#111827', marginBottom: '0.4rem' }}>
+              Agregar Nuevo Alimento
+            </h1>
             <p style={{ color: '#6b7280', fontSize: '15px' }}>Completa los detalles para actualizar tu inventario</p>
           </div>
 
@@ -109,11 +130,11 @@ export default function FormularioPage() {
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
+              flexWrap: 'wrap',
+              gap: '0.75rem',
               boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)'
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <span>{mensaje}</span>
-              </div>
+              <span>{mensaje}</span>
               {tipoMensaje === 'exito' && (
                 <button
                   onClick={() => window.location.href = '/listado'}
@@ -123,9 +144,10 @@ export default function FormularioPage() {
                     border: 'none',
                     padding: '0.4rem 0.8rem',
                     borderRadius: '8px',
-                    fontSize: '12px',
+                    fontSize: '13px',
                     cursor: 'pointer',
-                    transition: 'all 0.2s'
+                    transition: 'all 0.2s',
+                    flexShrink: 0,
                   }}
                 >
                   Ver Inventario
@@ -136,16 +158,17 @@ export default function FormularioPage() {
 
           <form onSubmit={handleSubmit} style={{
             backgroundColor: 'white',
-            padding: '2.5rem',
-            borderRadius: '24px',
-            boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
-            border: '1px solid #f3f4f6'
+            padding: 'clamp(1.25rem, 5vw, 2.5rem)',
+            borderRadius: '20px',
+            boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.08)',
+            border: '1px solid #f3f4f6',
           }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+            {/* Grid responsivo: 2 columnas en ≥768px, 1 en móvil */}
+            <div className="form-grid">
               {/* Columna Izquierda */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
                 <div>
-                  <label htmlFor="nombre" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600', fontSize: '14px', color: '#374151' }}>
+                  <label htmlFor="nombre" style={labelStyle}>
                     Nombre del Producto <span style={{ color: '#ef4444' }}>*</span>
                   </label>
                   <input
@@ -155,20 +178,12 @@ export default function FormularioPage() {
                     value={formData.nombre}
                     onChange={handleChange}
                     placeholder="Ej: Filete de Ternera"
-                    style={{
-                      width: '100%',
-                      padding: '0.75rem 1rem',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '10px',
-                      fontSize: '14px',
-                      backgroundColor: '#f9fafb',
-                      transition: 'border-color 0.2s'
-                    }}
+                    style={inputStyle}
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="categoria" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600', fontSize: '14px', color: '#374151' }}>
+                  <label htmlFor="categoria" style={labelStyle}>
                     Categoría <span style={{ color: '#ef4444' }}>*</span>
                   </label>
                   <select
@@ -176,15 +191,7 @@ export default function FormularioPage() {
                     name="categoria"
                     value={formData.categoria}
                     onChange={handleChange}
-                    style={{
-                      width: '100%',
-                      padding: '0.75rem 1rem',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '10px',
-                      fontSize: '14px',
-                      backgroundColor: '#f9fafb',
-                      cursor: 'pointer'
-                    }}
+                    style={{ ...inputStyle, cursor: 'pointer' }}
                   >
                     <option value="">Selecciona una categoria</option>
                     <option value="carnes">Carnes</option>
@@ -202,9 +209,10 @@ export default function FormularioPage() {
                   </select>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                {/* Fechas: en móvil apiladas, en tablet+ lado a lado */}
+                <div className="dates-grid">
                   <div>
-                    <label htmlFor="fechaEntrada" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600', fontSize: '14px', color: '#374151' }}>
+                    <label htmlFor="fechaEntrada" style={labelStyle}>
                       Fecha Entrada <span style={{ color: '#ef4444' }}>*</span>
                     </label>
                     <input
@@ -213,18 +221,11 @@ export default function FormularioPage() {
                       name="fechaEntrada"
                       value={formData.fechaEntrada}
                       onChange={handleChange}
-                      style={{
-                        width: '100%',
-                        padding: '0.75rem 1rem',
-                        border: '1px solid #d1d5db',
-                        borderRadius: '10px',
-                        fontSize: '14px',
-                        backgroundColor: '#f9fafb'
-                      }}
+                      style={inputStyle}
                     />
                   </div>
                   <div>
-                    <label htmlFor="fechaCaducidad" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600', fontSize: '14px', color: '#374151' }}>
+                    <label htmlFor="fechaCaducidad" style={labelStyle}>
                       Fecha Caducidad <span style={{ color: '#ef4444' }}>*</span>
                     </label>
                     <input
@@ -233,14 +234,7 @@ export default function FormularioPage() {
                       name="fechaCaducidad"
                       value={formData.fechaCaducidad}
                       onChange={handleChange}
-                      style={{
-                        width: '100%',
-                        padding: '0.75rem 1rem',
-                        border: '1px solid #d1d5db',
-                        borderRadius: '10px',
-                        fontSize: '14px',
-                        backgroundColor: '#f9fafb'
-                      }}
+                      style={inputStyle}
                     />
                   </div>
                 </div>
@@ -249,7 +243,7 @@ export default function FormularioPage() {
               {/* Columna Derecha */}
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
                 <div>
-                  <label htmlFor="cantidad" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600', fontSize: '14px', color: '#374151' }}>
+                  <label htmlFor="cantidad" style={labelStyle}>
                     Stock y Medida <span style={{ color: '#ef4444' }}>*</span>
                   </label>
                   <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr', gap: '0.75rem' }}>
@@ -262,28 +256,17 @@ export default function FormularioPage() {
                       placeholder="Cantidad"
                       min="0"
                       step="0.01"
-                      style={{
-                        width: '100%',
-                        padding: '0.75rem 1rem',
-                        border: '1px solid #d1d5db',
-                        borderRadius: '10px',
-                        fontSize: '14px',
-                        backgroundColor: '#f9fafb'
-                      }}
+                      style={inputStyle}
                     />
                     <select
                       name="unidadMedida"
                       value={formData.unidadMedida}
                       onChange={handleChange}
                       style={{
-                        width: '100%',
-                        padding: '0.75rem 1rem',
-                        border: '1px solid #d1d5db',
-                        borderRadius: '10px',
-                        fontSize: '14px',
+                        ...inputStyle,
                         backgroundColor: '#f3f4f6',
                         fontWeight: '600',
-                        cursor: 'pointer'
+                        cursor: 'pointer',
                       }}
                     >
                       <option value="KG">KG</option>
@@ -296,7 +279,7 @@ export default function FormularioPage() {
                 </div>
 
                 <div>
-                  <label htmlFor="numeroLote" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600', fontSize: '14px', color: '#374151' }}>
+                  <label htmlFor="numeroLote" style={labelStyle}>
                     Número de Lote <span style={{ color: '#ef4444' }}>*</span>
                   </label>
                   <input
@@ -306,19 +289,12 @@ export default function FormularioPage() {
                     value={formData.numeroLote}
                     onChange={handleChange}
                     placeholder="Ej: LOT-2024-001"
-                    style={{
-                      width: '100%',
-                      padding: '0.75rem 1rem',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '10px',
-                      fontSize: '14px',
-                      backgroundColor: '#f9fafb'
-                    }}
+                    style={inputStyle}
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="zonaAlmacen" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600', fontSize: '14px', color: '#374151' }}>
+                  <label htmlFor="zonaAlmacen" style={labelStyle}>
                     Zona de Almacén <span style={{ color: '#ef4444' }}>*</span>
                   </label>
                   <select
@@ -326,15 +302,7 @@ export default function FormularioPage() {
                     name="zonaAlmacen"
                     value={formData.zonaAlmacen}
                     onChange={handleChange}
-                    style={{
-                      width: '100%',
-                      padding: '0.75rem 1rem',
-                      border: '1px solid #d1d5db',
-                      borderRadius: '10px',
-                      fontSize: '14px',
-                      backgroundColor: '#f9fafb',
-                      cursor: 'pointer'
-                    }}
+                    style={{ ...inputStyle, cursor: 'pointer' }}
                   >
                     <option value="">Selecciona una zona</option>
                     <option value="frigorifico">Frigorífico</option>
@@ -347,7 +315,7 @@ export default function FormularioPage() {
               </div>
             </div>
 
-            <div style={{ marginTop: '2.5rem' }}>
+            <div style={{ marginTop: '2rem' }}>
               <button
                 type="submit"
                 disabled={loading}
@@ -362,7 +330,8 @@ export default function FormularioPage() {
                   fontWeight: '700',
                   cursor: loading ? 'not-allowed' : 'pointer',
                   transition: 'all 0.2s',
-                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)'
+                  boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
+                  touchAction: 'manipulation',
                 }}
               >
                 {loading ? 'Guardando ingrediente...' : 'Guardar Ingrediente en Inventario'}
@@ -371,6 +340,29 @@ export default function FormularioPage() {
           </form>
         </div>
       </div>
+
+      <style>{`
+        .form-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 2rem;
+        }
+        .dates-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 1rem;
+        }
+        @media (max-width: 640px) {
+          .form-grid {
+            grid-template-columns: 1fr;
+            gap: 1.2rem;
+          }
+          .dates-grid {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+          }
+        }
+      `}</style>
     </div>
   )
 }

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { PanelIngredientes } from '../components/PanelIngredientes';
 import { PanelPlato } from '../components/PanelPlato';
 import * as platoService from '../services/platoService';
@@ -14,14 +14,10 @@ export function GenerarPlatosPage() {
 
   const [ingredientes, setIngredientes] = useState<IngredienteDisponible[]>([]);
   const [loadingIngredientes, setLoadingIngredientes] = useState(true);
-
   const [nombrePlato, setNombrePlato] = useState('');
   const [descripcionPlato, setDescripcionPlato] = useState('');
   const [imagenPlato, setImagenPlato] = useState('');
-  const [ingredientesSeleccionados, setIngredientesSeleccionados] = useState<
-    IngredientePlato[]
-  >([]);
-
+  const [ingredientesSeleccionados, setIngredientesSeleccionados] = useState<IngredientePlato[]>([]);
   const [mensajeExito, setMensajeExito] = useState('');
   const [mensajeError, setMensajeError] = useState('');
   const [guardando, setGuardando] = useState(false);
@@ -29,19 +25,14 @@ export function GenerarPlatosPage() {
 
   useEffect(() => {
     cargarIngredientes();
-    if (editId) {
-      cargarPlatoParaEditar(editId);
-    }
+    if (editId) cargarPlatoParaEditar(editId);
   }, [editId]);
 
   const cargarIngredientes = async () => {
     setLoadingIngredientes(true);
     const resultado = await platoService.obtenerIngredientesDisponibles();
-    if (resultado.success) {
-      setIngredientes(resultado.data);
-    } else {
-      setMensajeError(resultado.error);
-    }
+    if (resultado.success) setIngredientes(resultado.data);
+    else setMensajeError(resultado.error);
     setLoadingIngredientes(false);
   };
 
@@ -65,7 +56,6 @@ export function GenerarPlatosPage() {
       setMensajeError(`${ingrediente.nombre} ya está agregado al plato`);
       return;
     }
-
     const nuevoIngrediente: IngredientePlato = {
       id: ingrediente.id,
       nombre: ingrediente.nombre,
@@ -75,59 +65,26 @@ export function GenerarPlatosPage() {
       unidad_medida_stock: ingrediente.unidad_medida,
       categoria: ingrediente.categoria,
     };
-
-    setIngredientesSeleccionados([
-      ...ingredientesSeleccionados,
-      nuevoIngrediente,
-    ]);
-
+    setIngredientesSeleccionados([...ingredientesSeleccionados, nuevoIngrediente]);
     setMensajeError('');
   };
 
-  const handleRemoverIngrediente = (ingredienteId: string) => {
-    setIngredientesSeleccionados(
-      ingredientesSeleccionados.filter((ing) => ing.id !== ingredienteId)
-    );
-  };
+  const handleRemoverIngrediente = (ingredienteId: string) =>
+    setIngredientesSeleccionados(ingredientesSeleccionados.filter((ing) => ing.id !== ingredienteId));
 
-  const handleCantidadChange = (ingredienteId: string, cantidad: number) => {
-    setIngredientesSeleccionados(
-      ingredientesSeleccionados.map((ing) =>
-        ing.id === ingredienteId ? { ...ing, cantidad } : ing
-      )
-    );
-  };
+  const handleCantidadChange = (ingredienteId: string, cantidad: number) =>
+    setIngredientesSeleccionados(ingredientesSeleccionados.map((ing) => ing.id === ingredienteId ? { ...ing, cantidad } : ing));
 
-  const handleUnidadChange = (ingredienteId: string, unidad_medida: string) => {
-    setIngredientesSeleccionados(
-      ingredientesSeleccionados.map((ing) =>
-        ing.id === ingredienteId ? { ...ing, unidad_medida } : ing
-      )
-    );
-  };
+  const handleUnidadChange = (ingredienteId: string, unidad_medida: string) =>
+    setIngredientesSeleccionados(ingredientesSeleccionados.map((ing) => ing.id === ingredienteId ? { ...ing, unidad_medida } : ing));
 
   const handleGuardarPlato = async () => {
     setMensajeError('');
     setMensajeExito('');
+    if (!nombrePlato.trim()) { setMensajeError('El nombre del plato es requerido'); return; }
+    if (ingredientesSeleccionados.length === 0) { setMensajeError('Debes agregar al menos un ingrediente al plato'); return; }
+    if (ingredientesSeleccionados.some((ing) => ing.cantidad <= 0)) { setMensajeError('La cantidad de cada ingrediente debe ser mayor a 0'); return; }
 
-    if (!nombrePlato.trim()) {
-      setMensajeError('El nombre del plato es requerido');
-      return;
-    }
-
-    if (ingredientesSeleccionados.length === 0) {
-      setMensajeError('Debes agregar al menos un ingrediente al plato');
-      return;
-    }
-
-    if (
-      ingredientesSeleccionados.some((ing) => ing.cantidad <= 0)
-    ) {
-      setMensajeError('La cantidad de cada ingrediente debe ser mayor a 0');
-      return;
-    }
-
-    // Nueva validación de stock antes de enviar al servidor
     for (const ing of ingredientesSeleccionados) {
       if (ing.cantidad_disponible !== undefined) {
         const cantidadNormalizada = platoService.normalizarCantidad(ing.cantidad, ing.unidad_medida);
@@ -140,7 +97,6 @@ export function GenerarPlatosPage() {
     }
 
     setGuardando(true);
-
     const platoInput = {
       nombre: nombrePlato.trim(),
       descripcion: descripcionPlato.trim(),
@@ -152,28 +108,21 @@ export function GenerarPlatosPage() {
       })),
     };
 
-    let resultado;
-    if (editId) {
-      resultado = await platoService.actualizarPlato(editId, platoInput);
-    } else {
-      resultado = await platoService.crearPlato(platoInput);
-    }
+    const resultado = editId
+      ? await platoService.actualizarPlato(editId, platoInput)
+      : await platoService.crearPlato(platoInput);
 
     setGuardando(false);
 
     if (resultado.success) {
       setMensajeExito(`Plato "${resultado.data.nombre}" ${editId ? 'actualizado' : 'creado'} exitosamente`);
-
       if (!editId) {
         setNombrePlato('');
         setDescripcionPlato('');
         setImagenPlato('');
         setIngredientesSeleccionados([]);
       }
-
-      setTimeout(() => {
-        setMensajeExito('');
-      }, 2000);
+      setTimeout(() => setMensajeExito(''), 2000);
     } else {
       setMensajeError(resultado.error);
     }
@@ -196,41 +145,41 @@ export function GenerarPlatosPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <AppHeader />
-      <div className="max-w-7xl mx-auto p-6">
-        <div className="flex items-center gap-4 mb-8">
+      <div className="max-w-7xl mx-auto p-4 md:p-6">
+
+        {/* Cabecera */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
           <button
             onClick={() => navigate('/platos')}
-            className="p-2 bg-white border border-gray-200 rounded-xl text-gray-600 hover:text-orange-600 hover:border-orange-200 transition-all shadow-sm"
+            className="p-2 bg-white border border-gray-200 rounded-xl text-gray-600 hover:text-orange-600 hover:border-orange-200 transition-all shadow-sm flex-shrink-0"
           >
             <LuArrowLeft className="w-5 h-5" />
           </button>
-          <h1 className="text-3xl font-bold text-gray-800">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
             {editId ? 'Editar Plato' : 'Generar Nuevo Plato'}
           </h1>
         </div>
 
         {mensajeError && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl shadow-sm">
-            {mensajeError}
-          </div>
+          <div className="mb-4 p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl shadow-sm">{mensajeError}</div>
         )}
         {mensajeExito && (
-          <div className="mb-6 p-4 bg-green-50 border border-green-200 text-green-700 rounded-xl shadow-sm flex items-center gap-2">
+          <div className="mb-4 p-4 bg-green-50 border border-green-200 text-green-700 rounded-xl shadow-sm flex items-center gap-2">
             <LuCheck className="w-5 h-5" />
             {mensajeExito}
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+        {/* Paneles: apilados en móvil, 2 columnas en desktop */}
+        <div className="generar-platos-grid" style={{ display: 'grid', gap: '1.25rem', marginBottom: '1.25rem' }}>
+          <div className="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-gray-100">
             <PanelIngredientes
               ingredientes={ingredientes}
               onAgregarClick={handleAgregarIngrediente}
               isLoading={loadingIngredientes}
             />
           </div>
-
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+          <div className="bg-white p-4 md:p-6 rounded-2xl shadow-sm border border-gray-100">
             <PanelPlato
               nombrePlato={nombrePlato}
               descripcionPlato={descripcionPlato}
@@ -246,11 +195,13 @@ export function GenerarPlatosPage() {
           </div>
         </div>
 
-        <div className="flex justify-center mt-4">
+        {/* Botón guardar */}
+        <div className="flex justify-center pb-6">
           <button
             onClick={handleGuardarPlato}
             disabled={guardando}
-            className="flex items-center gap-2 px-10 py-4 bg-orange-600 hover:bg-orange-700 disabled:bg-gray-400 text-white font-bold rounded-2xl transition-all shadow-lg shadow-orange-600/25 hover:-translate-y-0.5 active:translate-y-0"
+            className="flex items-center gap-2 px-8 py-4 bg-orange-600 hover:bg-orange-700 disabled:bg-gray-400 text-white font-bold rounded-2xl transition-all shadow-lg shadow-orange-600/25 active:scale-[0.98]"
+            style={{ width: '100%', maxWidth: '400px', justifyContent: 'center', fontSize: '16px' }}
           >
             {guardando ? (
               <>
@@ -266,6 +217,17 @@ export function GenerarPlatosPage() {
           </button>
         </div>
       </div>
+
+      <style>{`
+        .generar-platos-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+        @media (max-width: 767px) {
+          .generar-platos-grid {
+            grid-template-columns: 1fr;
+          }
+        }
+      `}</style>
     </div>
   );
 }
