@@ -38,7 +38,7 @@ export async function sugerirPlatosPorIngredientes(ingredientes: string[]): Prom
     }
 
     // Usamos el modelo gemini-3.5-flash (suele estar menos saturado que los alias latest)
-    const model = genAI.getGenerativeModel({ model: 'gemini-3.5-flash' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
     // Construimos el prompt (instrucción) para la IA
     const prompt = `
