@@ -166,12 +166,8 @@ export async function crearPlato(
     console.log('ID Usuario:', user?.id || 'N/A');
     console.log('Error auth:', userError);
 
-    if (!platoInput.ingredientes || platoInput.ingredientes.length === 0) {
-      return {
-        success: false,
-        error: 'El plato debe tener al menos un ingrediente',
-      };
-    }
+    // Permite crear platos sin ingredientes (útil para ideas de IA)
+    // Validación original eliminada para permitir platos vacíos
 
     if (!platoInput.nombre.trim()) {
       return { success: false, error: 'El nombre del plato es requerido' };
@@ -183,28 +179,30 @@ export async function crearPlato(
       ingredientes: platoInput.ingredientes,
     });
 
-    for (const ing of platoInput.ingredientes) {
-      const validacion = await validarCantidadDisponible(
-        ing.ingrediente_id,
-        ing.cantidad,
-        ing.unidad_medida
-      );
+    if (platoInput.ingredientes && platoInput.ingredientes.length > 0) {
+      for (const ing of platoInput.ingredientes) {
+        const validacion = await validarCantidadDisponible(
+          ing.ingrediente_id,
+          ing.cantidad,
+          ing.unidad_medida
+        );
 
-      if (!validacion.success || !validacion.data) {
-        const { data: ingrediente } = await supabase
-          .from('ingredientes')
-          .select('nombre, cantidad, categoria, unidad_medida')
-          .eq('id', ing.ingrediente_id)
-          .single();
+        if (!validacion.success || !validacion.data) {
+          const { data: ingrediente } = await supabase
+            .from('ingredientes')
+            .select('nombre, cantidad, categoria, unidad_medida')
+            .eq('id', ing.ingrediente_id)
+            .single();
 
-        const cantidadDisponible = ingrediente?.cantidad || 0;
-        const nombreIng = ingrediente?.nombre || 'Ingrediente desconocido';
-        const unidadBase = obtenerUnidadBase(ingrediente?.categoria, ingrediente?.unidad_medida);
+          const cantidadDisponible = ingrediente?.cantidad || 0;
+          const nombreIng = ingrediente?.nombre || 'Ingrediente desconocido';
+          const unidadBase = obtenerUnidadBase(ingrediente?.categoria, ingrediente?.unidad_medida);
 
-        return {
-          success: false,
-          error: `Cantidad insuficiente de ${nombreIng}. Disponible: ${cantidadDisponible} ${unidadBase}, Requerido: ${ing.cantidad} ${ing.unidad_medida}`,
-        };
+          return {
+            success: false,
+            error: `Cantidad insuficiente de ${nombreIng}. Disponible: ${cantidadDisponible} ${unidadBase}, Requerido: ${ing.cantidad} ${ing.unidad_medida}`,
+          };
+        }
       }
     }
 
@@ -248,36 +246,38 @@ export async function crearPlato(
       }
     }
 
-    const ingredientesParaInsertar = platoInput.ingredientes.map((ing) => ({
-      plato_id: platoCreado.id,
-      ingrediente_id: ing.ingrediente_id,
-      cantidad: ing.cantidad,
-      unidad_medida: ing.unidad_medida,
-    }));
+    let ingredientesFormato: IngredientePlato[] = [];
 
-    console.log('Intentando insertar ingredientes:', ingredientesParaInsertar);
-    const { error: errorIngredientes } = await supabase
-      .from('platos_ingredientes')
-      .insert(ingredientesParaInsertar);
-
-    console.log('Respuesta insert platos_ingredientes:', {
-      error: errorIngredientes,
-      errorCode: (errorIngredientes as any)?.code,
-      errorMessage: (errorIngredientes as any)?.message,
-    });
-
-    if (errorIngredientes) throw errorIngredientes;
-
-    const ingredientesFormato: IngredientePlato[] = [];
-
-    for (const ing of platoInput.ingredientes) {
-      const nombre = await obtenerNombreIngrediente(ing.ingrediente_id);
-      ingredientesFormato.push({
-        id: ing.ingrediente_id,
-        nombre,
+    if (platoInput.ingredientes && platoInput.ingredientes.length > 0) {
+      const ingredientesParaInsertar = platoInput.ingredientes.map((ing) => ({
+        plato_id: platoCreado.id,
+        ingrediente_id: ing.ingrediente_id,
         cantidad: ing.cantidad,
         unidad_medida: ing.unidad_medida,
+      }));
+
+      console.log('Intentando insertar ingredientes:', ingredientesParaInsertar);
+      const { error: errorIngredientes } = await supabase
+        .from('platos_ingredientes')
+        .insert(ingredientesParaInsertar);
+
+      console.log('Respuesta insert platos_ingredientes:', {
+        error: errorIngredientes,
+        errorCode: (errorIngredientes as any)?.code,
+        errorMessage: (errorIngredientes as any)?.message,
       });
+
+      if (errorIngredientes) throw errorIngredientes;
+
+      for (const ing of platoInput.ingredientes) {
+        const nombre = await obtenerNombreIngrediente(ing.ingrediente_id);
+        ingredientesFormato.push({
+          id: ing.ingrediente_id,
+          nombre,
+          cantidad: ing.cantidad,
+          unidad_medida: ing.unidad_medida,
+        });
+      }
     }
 
     const platoRespuesta: Plato = {
