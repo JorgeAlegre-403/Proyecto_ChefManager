@@ -139,7 +139,7 @@ export async function actualizarRolUsuario(userId: string, nuevoRol: 'admin' | '
       })
       .eq('id', userId)
       .select();
-
+      console.log(data)
     if (error) throw error;
 
     return { 
