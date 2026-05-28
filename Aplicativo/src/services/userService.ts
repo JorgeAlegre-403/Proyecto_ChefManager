@@ -53,61 +53,43 @@ export async function obtenerUsuarios(): Promise<UsuarioResponse> {
 // Crear nuevo usuario
 export async function crearUsuario(input: CreateUsuarioInput): Promise<UsuarioResponse> {
   try {
-    let userData: any = null;
-    let userId: string = '';
+    // Usar supabaseAdmin para crear el usuario en Auth sin iniciar sesión
+    // WORKAROUND: La base de datos (trigger) puede fallar al insertar 'jefecocina'
+    // directamente. Por lo tanto, creamos el usuario como 'cocinero' y luego
+    // actualizamos su rol, evitando así el error del trigger.
+    const { data, error } = await supabaseAdmin.auth.admin.createUser({
+      email: input.email,
+      password: input.password,
+      email_confirm: true,
+      user_metadata: {
+        role: 'cocinero',
+      },
+    });
 
-    // Primero intenta con admin API (si tiene permisos)
-    try {
-      const { data, error } = await supabase.auth.admin.createUser({
-        email: input.email,
-        password: input.password,
-        email_confirm: true,
-        user_metadata: {
-          role: input.role,
-        },
+    if (error) throw error;
+
+    const userId = data.user.id;
+
+    // Actualizamos el rol real en Auth si es necesario
+    if (input.role !== 'cocinero') {
+      await supabaseAdmin.auth.admin.updateUserById(userId, {
+        user_metadata: { role: input.role }
       });
-
-      if (!error) {
-        userData = data;
-        userId = data.user.id;
-      }
-    } catch (_e) {
-      // Si falla admin, intenta con signUp
     }
 
-    // Si admin API falló, usar signUp
-    if (!userData) {
-      const { data, error } = await supabase.auth.signUp({
+    // Aseguramos que el usuario exista en la tabla usuarios_app con su rol correcto
+    // Usamos supabaseAdmin (service_role) para tener permisos absolutos
+    const { error: upsertDbError } = await supabaseAdmin
+      .from('usuarios_app')
+      .upsert({
+        id: userId,
         email: input.email,
-        password: input.password,
-        options: {
-          data: {
-            role: input.role,
-          },
-        },
+        role: input.role,
+        user_metadata: { role: input.role }
       });
 
-      if (error) throw error;
-      userData = data;
-      userId = data.user?.id || '';
-    }
-
-    // Guardar en tabla usuarios_app
-    if (userId) {
-      const { error: dbError } = await supabase
-        .from('usuarios_app')
-        .insert({
-          id: userId,
-          email: input.email,
-          role: input.role,
-          user_metadata: { role: input.role },
-          created_at: new Date(),
-          updated_at: new Date(),
-        });
-
-      if (dbError) {
-        console.warn('Advertencia: Usuario creado pero no guardado en tabla:', dbError);
-      }
+    if (upsertDbError) {
+      console.warn('Advertencia: No se pudo asegurar el usuario en la tabla usuarios_app:', upsertDbError);
     }
 
     return { 
@@ -120,7 +102,7 @@ export async function crearUsuario(input: CreateUsuarioInput): Promise<UsuarioRe
     };
   } catch (error: any) {
     console.error('Error al crear usuario:', error);
-    if (error.message?.includes('already registered')) {
+    if (error.message?.includes('already registered') || error.message?.includes('User already registered')) {
       return { success: false, error: 'El email ya está registrado' };
     }
     return { success: false, error: error.message || 'Error al crear usuario' };
@@ -158,18 +140,24 @@ export async function actualizarRolUsuario(userId: string, nuevoRol: 'admin' | '
 // Eliminar usuario
 export async function eliminarUsuario(userId: string): Promise<UsuarioResponse> {
   try {
-    // Eliminar solo de tabla usuarios_app
+    // Eliminar también de supabase auth usando admin API
+    const { error: authError } = await supabaseAdmin.auth.admin.deleteUser(userId);
+    if (authError) throw authError;
+
+    // Eliminar de tabla usuarios_app
     const { error } = await supabase
       .from('usuarios_app')
       .delete()
       .eq('id', userId);
 
-    if (error) throw error;
+    if (error) {
+      console.warn("Aviso al eliminar de tabla:", error);
+    }
 
     return { success: true, data: { message: 'Usuario eliminado correctamente' } };
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error al eliminar usuario:', error);
-    return { success: false, error: 'Error al eliminar usuario' };
+    return { success: false, error: error?.message || 'Error al eliminar usuario' };
   }
 }
 
